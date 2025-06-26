@@ -7,7 +7,7 @@ export default function SignUpPage() {
       <div className="signup-container">
         <section className="signup-info">
           <h1>회원가입</h1>
-          <p>회원가입 페이지입니다.</p>
+          <p>회원가입 페이지</p>
           <ul>
             <li>🏡 나에게 딱 맞는 빈집 정보 제공</li>
             <li>🤝 안전하고 신뢰할 수 있는 매칭 시스템</li>
