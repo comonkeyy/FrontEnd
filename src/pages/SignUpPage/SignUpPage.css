@@ -1,0 +1,109 @@
+.signup-page {
+  min-height: 100vh;
+  background: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.signup-container {
+  display: flex;
+  gap: 56px;
+  background: var(--color-white);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(56, 142, 60, 0.1);
+  padding: 48px 56px;
+  margin: 40px 0;
+}
+.signup-info {
+  min-width: 320px;
+  color: var(--color-deep-gray);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: -150px;
+}
+.signup-info h1 {
+  color: var(--color-deep-green);
+  font-size: 2.1rem;
+  margin-bottom: 18px;
+}
+.signup-info ul {
+  margin-top: 24px;
+  padding-left: 0;
+  list-style: none;
+}
+.signup-info li {
+  font-size: 1.08rem;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.signup-form {
+  background: var(--color-white);
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  border-left: 1px solid rgba(66, 66, 66, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.signup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+.signup-form .signup-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.signup-form .signup-form-group.full {
+  grid-column: 1 / span 2;
+}
+.signup-form label {
+  font-weight: 600;
+  color: var(--color-deep-green);
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.signup-form input {
+  height: 44px;
+  border: 1.5px solid var(--color-deep-gray);
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 1rem;
+  background: var(--color-white);
+  color: var(--color-deep-gray);
+  transition:
+    border 0.2s,
+    background 0.2s;
+  box-sizing: border-box;
+}
+.signup-form input:focus {
+  border-color: var(--color-deep-green);
+  outline: none;
+  background: var(--color-white);
+}
+.signup-form .signup-btn {
+  margin-top: 18px;
+  background: var(--color-deep-green);
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  box-shadow: 0 2px 8px rgba(56, 142, 60, 0.08);
+  width: 100%;
+}
+.signup-form .signup-btn:hover {
+  background: rgba(56, 142, 60, 0.75);
+  color: var(--color-white);
+}

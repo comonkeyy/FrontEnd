@@ -1,0 +1,26 @@
+.main-header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(56, 142, 60, 0.04);
+  padding: 0 40px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+}
+.header-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-deep-green);
+  letter-spacing: 1px;
+}
+.header-cta {
+  display: flex;
+  gap: 16px;
+}

@@ -1,0 +1,14 @@
+.signup-btn {
+  background: var(--color-white);
+  color: var(--color-deep-green);
+  border: 1.5px solid var(--color-deep-green);
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.signup-btn:hover {
+  background: #bcbcbc4c;
+}
