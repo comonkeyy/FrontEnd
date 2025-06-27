@@ -7,6 +7,8 @@ import Home from './pages/Home/Home';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
 import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
+import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
+import ReviewPage from './pages/ReviewPage/Review';
 
 const AppRouter: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
@@ -25,6 +27,8 @@ const AppRouter: React.FC = () => {
           <Route path="/owner/mypage" element={<MyPage />} />
           <Route path="/owner/watinglist" element={<MyPage />} />
           <Route path="/owner/matchedlist" element={<MyPage />} />
+          <Route path="/request" element={<MatchRequestPage />} />
+          <Route path="/review" element={<ReviewPage />} />
         </Routes>
         <Footer />
       </div>
