@@ -30,13 +30,49 @@
   padding: 1.5rem;
 }
 
+.image-upload {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-label {
+  width: 100%;
+  height: 200px;
+  background: #e7f1a8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-placeholder {
+  color: #364c84;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-input {
+  display: none;
+}
+
 .info-group {
   margin-top: 1rem;
 }
 
 .info-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 1rem;
   gap: 0.5rem;
 }
@@ -47,6 +83,15 @@
   font-weight: bold;
   font-size: 0.95rem;
   flex-shrink: 0;
+  padding-top: 0.5rem;
+}
+
+/* 최소/최대 평수 입력란 세로 배치 */
+.area-range-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .input-with-unit {
@@ -174,12 +219,14 @@
   background: #e7f1a8;
 }
 
-/* 방 수 입력란 등 number 타입 input의 스핀 버튼 숨기기 */
+/* input type="number"의 스핀 버튼(화살표) 제거 */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   margin: 0;
 }
 input[type="number"] {
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield;
 }
