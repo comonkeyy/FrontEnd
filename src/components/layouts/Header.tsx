@@ -75,13 +75,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
             {userRole === 'worker' && (
               <>
                 <Link
-                  to="/worker/match"
+                  to="/request"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   복지사 매칭
                 </Link>
                 <Link
-                  to="/worker/review"
+                  to="/review"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   리뷰

@@ -35,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ userRole }) => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   className="bg-[#E7F1A8] hover:bg-[#D9E68A] text-[#364C84] font-medium px-6 py-3 rounded-button cursor-pointer whitespace-nowrap"
-                  onClick={() => navigate('/register-property')}
+                  onClick={() => navigate('/owner/register')}
                 >
                   빈집 등록하기
                 </button>
@@ -55,7 +55,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ userRole }) => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   className="bg-[#95B1EE] hover:bg-[#7D9FE9] text-white font-medium px-6 py-3 rounded-button cursor-pointer whitespace-nowrap"
-                  onClick={() => navigate('/worker-match')}
+                  onClick={() => navigate('/request')}
                 >
                   복지사 매칭 신청
                 </button>
