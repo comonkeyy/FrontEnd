@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// 빈집 데이터 타입을 정의합니다.
 interface VacantHouse {
   id: string;
   name: string;
   address: string;
-  status: '매칭대기' | '매칭진행중' | '매칭완료';
+  status: '매칭대기' | '매칭완료';
   registeredDate: string;
   image: string;
   description: string;
@@ -16,7 +15,6 @@ interface VacantHouse {
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  // Mock 데이터를 상태로 관리합니다. 실제로는 API로 받아옵니다.
   const [houses, setHouses] = useState<VacantHouse[]>([
     {
       id: '1',
@@ -35,7 +33,7 @@ const MyPage: React.FC = () => {
       id: '2',
       name: '모던 스타일 단독주택',
       address: '경상북도 의성군 의성읍 후죽리 456',
-      status: '매칭진행중',
+      status: '매칭대기',
       registeredDate: '2025-05-15',
       image:
         'https://readdy.ai/api/search-image?query=A%20modern%20Korean%20style%20house%20with%20minimalist%20design%2C%20large%20windows%2C%20and%20a%20small%20garden.%20The%20exterior%20combines%20traditional%20and%20contemporary%20elements%2C%20captured%20in%20bright%20daylight%20showing%20its%20clean%20lines%20and%20welcoming%20entrance&width=400&height=300&seq=house2&orientation=landscape',
@@ -57,18 +55,14 @@ const MyPage: React.FC = () => {
     },
   ]);
 
-  // 모달 상태 관리
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedHouseId, setSelectedHouseId] = useState<string | null>(null);
-  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
 
-  // 삭제 버튼 클릭 핸들러
   const handleDeleteHouse = (id: string) => {
     setSelectedHouseId(id);
     setShowDeleteModal(true);
   };
 
-  // 삭제 확인 모달에서 '삭제' 버튼 클릭 시
   const confirmDelete = () => {
     if (selectedHouseId) {
       setHouses(houses.filter((house) => house.id !== selectedHouseId));
@@ -77,13 +71,10 @@ const MyPage: React.FC = () => {
     }
   };
 
-  // 매칭 상태에 따라 뱃지 색상을 반환하는 함수
   const getStatusColor = (status: string) => {
     switch (status) {
       case '매칭대기':
         return 'bg-yellow-100 text-yellow-800';
-      case '매칭진행중':
-        return 'bg-blue-100 text-blue-800';
       case '매칭완료':
         return 'bg-green-100 text-green-800';
       default:
@@ -93,7 +84,6 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFDF5]">
-      {/* 메인 콘텐츠 */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-[#364C84]">내 빈집 목록</h2>
@@ -111,7 +101,7 @@ const MyPage: React.FC = () => {
           {houses.map((house) => (
             <div
               key={house.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -120,15 +110,12 @@ const MyPage: React.FC = () => {
                   className="w-full h-full object-cover object-top"
                 />
                 <span
-                  className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                    house.status,
-                  )}`}
+                  className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(house.status)}`}
                 >
                   {house.status}
                 </span>
               </div>
-              {/* ✨ 수정된 부분: flex flex-col flex-1 추가 */}
-              <div className="p-6 flex flex-col flex-1">
+              <div className="p-6">
                 <h3 className="text-xl font-bold text-[#364C84] mb-2">
                   {house.name}
                 </h3>
@@ -149,18 +136,27 @@ const MyPage: React.FC = () => {
                     </span>
                   ))}
                 </div>
-                <div className="flex justify-between items-center mt-auto">
-                  <button className="text-[#364C84] hover:text-[#2A3B68] font-medium flex items-center cursor-pointer whitespace-nowrap">
-                    {/* <i className="fas fa-edit mr-2"></i> */}
-                    수정하기
-                  </button>
-                  <button
-                    onClick={() => handleDeleteHouse(house.id)}
-                    className="text-red-600 hover:text-red-700 font-medium flex items-center cursor-pointer whitespace-nowrap"
-                  >
-                    {/* <i className="fas fa-trash-alt mr-2"></i> */}
-                    삭제하기
-                  </button>
+                <div className="flex justify-between items-center">
+                  {/* 매칭완료가 아니면 수정/삭제 버튼 노출 */}
+                  {house.status !== '매칭완료' ? (
+                    <>
+                      <button className="text-[#364C84] hover:text-[#2A3B68] font-medium flex items-center cursor-pointer whitespace-nowrap">
+                        <i className="fas fa-edit mr-2"></i>
+                        수정하기
+                      </button>
+                      <button
+                        onClick={() => handleDeleteHouse(house.id)}
+                        className="text-red-600 hover:text-red-700 font-medium flex items-center cursor-pointer whitespace-nowrap"
+                      >
+                        <i className="fas fa-trash-alt mr-2"></i>
+                        삭제하기
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-[#95B1EE] font-semibold text-sm">
+                      매칭완료된 집은 <br></br>수정/삭제 불가
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -186,7 +182,7 @@ const MyPage: React.FC = () => {
               </button>
               <button
                 onClick={confirmDelete}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg cursor-pointer whitespace-nowrap"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-button cursor-pointer whitespace-nowrap"
               >
                 삭제하기
               </button>
@@ -194,9 +190,6 @@ const MyPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* 빈집 등록 모달 (UI는 구현되지 않음) */}
-      {/* {showRegistrationModal && ( ... )} */}
     </div>
   );
 };

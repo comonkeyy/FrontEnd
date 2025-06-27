@@ -32,16 +32,16 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
             {userRole === 'owner' && (
               <>
                 <Link
-                  to="/owner/houses"
-                  className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
-                >
-                  빈집 목록 조회
-                </Link>
-                <Link
                   to="/owner/register"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   빈집 등록
+                </Link>
+                <Link
+                  to="/owner/houses"
+                  className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+                >
+                  빈집 목록 조회
                 </Link>
                 <Link
                   to="/owner/matched"
