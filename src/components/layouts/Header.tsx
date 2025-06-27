@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   to="/owner/houses"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
-                  빈집 목록 조회
+                  매칭 대기중인 빈집
                 </Link>
                 <Link
                   to="/owner/matched"
