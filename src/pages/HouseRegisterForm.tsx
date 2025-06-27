@@ -4,8 +4,7 @@ const HouseRegisterForm: React.FC = () => {
   const [form, setForm] = useState({
     address: '',
     detailAddress: '',
-    minArea: '',
-    maxArea: '',
+    area: '', // 평수 한 칸으로 변경
     floorCount: '',
     region: '',
     description: '',
@@ -152,7 +151,7 @@ const HouseRegisterForm: React.FC = () => {
                 <div>
                   <label
                     htmlFor="detailAddress"
-                    className="block text-gray-700 font-medium mb-2"
+                    className="block text-gray-7 font-medium mb-2"
                   >
                     상세 주소
                   </label>
@@ -169,62 +168,27 @@ const HouseRegisterForm: React.FC = () => {
                 </div>
               </div>
             </div>
-            {/* 평수 범위 */}
+            {/* 평수 */}
             <div className="mb-8">
               <h3 className="text-xl font-bold text-[#364C84] mb-4 flex items-center">
                 <i className="fas fa-ruler-combined mr-2"></i>
-                희망 평수 범위
+                평수
               </h3>
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor="minArea"
-                    className="block text-gray-700 font-medium mb-2"
-                  >
-                    최소 평수
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      id="minArea"
-                      name="minArea"
-                      value={form.minArea}
-                      onChange={handleChange}
-                      min="0"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
-                      placeholder="최소 평수"
-                      required
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      m²
-                    </span>
-                  </div>
-                </div>
-                <span className="text-gray-500 text-xl">~</span>
-                <div className="flex-1">
-                  <label
-                    htmlFor="maxArea"
-                    className="block text-gray-700 font-medium mb-2"
-                  >
-                    최대 평수
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      id="maxArea"
-                      name="maxArea"
-                      value={form.maxArea}
-                      onChange={handleChange}
-                      min="0"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
-                      placeholder="최대 평수"
-                      required
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      m²
-                    </span>
-                  </div>
-                </div>
+              <div className="relative">
+                <input
+                  type="number"
+                  id="area"
+                  name="area"
+                  value={form.area}
+                  onChange={handleChange}
+                  min="0"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
+                  placeholder="평수를 입력하세요"
+                  required
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                  m²
+                </span>
               </div>
             </div>
             {/* 지역 선택 */}
@@ -249,7 +213,7 @@ const HouseRegisterForm: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-7">
                   <i className="fas fa-chevron-down"></i>
                 </div>
               </div>
@@ -275,7 +239,7 @@ const HouseRegisterForm: React.FC = () => {
                   <option value="3">3층</option>
                   <option value="4">4층 이상</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-7">
                   <i className="fas fa-chevron-down"></i>
                 </div>
               </div>
