@@ -2,6 +2,8 @@
 import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import VacantHouseForm from '@/features/auth/vacant-house/VacantHouseForm';
+import type { VacantHouseData } from '@/types/vacantHouse';
 
 interface VacantHouse {
   id: string;
@@ -12,7 +14,6 @@ interface VacantHouse {
   image: string;
   description: string;
   size: string;
-  facilities: string[];
 }
 const MyPage: React.FC = () => {
   const location = useLocation();
@@ -34,46 +35,54 @@ const MyPage: React.FC = () => {
     setActiveTab(tab);
     navigate(tab === 'waiting' ? '/owner/watinglist' : '/owner/matchedlist');
   };
-
-  const [houses, setHouses] = useState<VacantHouse[]>([
+  const [houses, setHouses] = useState<VacantHouseData[]>([
     {
       id: '1',
       name: '전통한옥 스타일 주택',
       address: '경상북도 의성군 의성읍 중앙로 123',
+      detailAddress: '301호',
+      area: '85', // 단위 없음
+      floorCount: '3',
+      region: '의성읍',
       status: '매칭대기',
       registeredDate: '2025-06-01',
-      image:
+      images: [
         'https://readdy.ai/api/search-image?query=A%20beautiful%20traditional%20Korean%20hanok%20house%20with%20modern%20amenities%2C%20well-maintained%20garden%2C%20and%20clean%20architectural%20lines.%20The%20house%20features%20wooden%20elements%20and%20a%20tiled%20roof%2C%20photographed%20during%20golden%20hour%20with%20soft%20natural%20lighting&width=400&height=300&seq=house1&orientation=landscape',
-      description:
-        '리모델링 완료된 전통 한옥으로, 현대식 시설을 갖추고 있습니다.',
-      size: '85㎡',
-      facilities: ['주차장', '정원', '에어컨', '보안시설'],
+      ],
+      description: '전통 한옥 스타일의 아름다운 주택...',
     },
     {
       id: '2',
       name: '모던 스타일 단독주택',
       address: '경상북도 의성군 의성읍 후죽리 456',
+      detailAddress: '302호',
+      area: '95',
+      floorCount: '3',
+      region: '의성읍',
       status: '매칭대기',
       registeredDate: '2025-05-15',
-      image:
+      images: [
         'https://readdy.ai/api/search-image?query=A%20modern%20Korean%20style%20house%20with%20minimalist%20design%2C%20large%20windows%2C%20and%20a%20small%20garden.%20The%20exterior%20combines%20traditional%20and%20contemporary%20elements%2C%20captured%20in%20bright%20daylight%20showing%20its%20clean%20lines%20and%20welcoming%20entrance&width=400&height=300&seq=house2&orientation=landscape',
+      ],
       description: '2023년 리모델링 완료, 복지사 거주에 최적화된 구조',
-      size: '95㎡',
-      facilities: ['주차장', '테라스', '에어컨', '보안시설', '창고'],
     },
     {
       id: '3',
       name: '전원주택 스타일 빈집',
       address: '경상북도 의성군 의성읍 업리 789',
+      detailAddress: '201호',
+      area: '120',
+      floorCount: '2',
+      region: '의성읍',
       status: '매칭완료',
       registeredDate: '2025-04-20',
-      image:
+      images: [
         'https://readdy.ai/api/search-image?query=A%20countryside%20Korean%20house%20with%20a%20spacious%20yard%20and%20mountain%20view.%20The%20house%20combines%20modern%20comfort%20with%20rural%20charm%2C%20featuring%20a%20vegetable%20garden%20and%20outdoor%20seating%20area%2C%20photographed%20in%20warm%20afternoon%20light&width=400&height=300&seq=house3&orientation=landscape',
+      ],
       description: '자연친화적인 환경, 텃밭 있음',
-      size: '120㎡',
-      facilities: ['주차장', '텃밭', '에어컨', '보안시설', '창고', '테라스'],
     },
   ]);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedHouseId, setSelectedHouseId] = useState<string | null>(null);
@@ -159,7 +168,11 @@ const MyPage: React.FC = () => {
               >
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src={house.image}
+                    src={
+                      house.images && house.images[0]
+                        ? house.images[0]
+                        : '/no-image.jpg'
+                    }
                     alt={house.name}
                     className="w-full h-full object-cover object-top"
                   />
@@ -178,25 +191,17 @@ const MyPage: React.FC = () => {
                     <p className="text-sm text-gray-500">
                       등록일: {house.registeredDate}
                     </p>
-                    <p className="text-sm text-gray-500">면적: {house.size}</p>
+                    <p className="text-sm text-gray-500">
+                      면적: {house.area}㎡
+                    </p>
                   </div>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {house.facilities.map((facility, index) => (
-                      <span
-                        key={index}
-                        className="bg-[#E7F1A8] text-[#364C84] text-sm px-3 py-1 rounded-full"
-                      >
-                        {facility}
-                      </span>
-                    ))}
-                  </div>
+
                   <div className="flex justify-between items-center">
                     {activeTab === 'waiting' ? (
                       <>
                         <button
                           onClick={() => {
-                            const house = houses.find((h) => h.id === house.id);
-                            setEditingHouse(house);
+                            setEditingHouse(house); // house는 map의 콜백 파라미터
                             setShowEditModal(true);
                           }}
                           className="text-[#364C84] hover:text-[#2A3B68] font-medium flex items-center cursor-pointer whitespace-nowrap"
@@ -253,10 +258,9 @@ const MyPage: React.FC = () => {
         </div>
       )}
 
-      {/* 빈집 수정 모달 */}
       {showEditModal && editingHouse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <div className="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 my-8">
+          <div className="bg-white rounded-lg p-8 w-full max-w-xl max-h-[90vh] overflow-y-auto border border-[#95B1EE] mx-4 my-8">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-[#364C84]">
                 빈집 정보 수정
@@ -268,173 +272,37 @@ const MyPage: React.FC = () => {
                 <i className="fas fa-times text-xl"></i>
               </button>
             </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Here you would update the house information
+
+            <VacantHouseForm
+              mode="edit"
+              initialData={{
+                address: editingHouse.address,
+                detailAddress: editingHouse.detailAddress || '',
+                area: editingHouse.area || '', // 여기!
+                floorCount: editingHouse.floorCount || '',
+                region: editingHouse.region || '',
+                description: editingHouse.description,
+                images: editingHouse.images,
+              }}
+              onSubmit={(data) => {
+                setHouses((prevHouses) =>
+                  prevHouses.map((house) =>
+                    house.id === editingHouse.id
+                      ? {
+                          ...house,
+                          ...data,
+                        }
+                      : house,
+                  ),
+                );
                 setShowEditModal(false);
               }}
-              className="space-y-6"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-700 mb-2">건물 이름</label>
-                  <input
-                    type="text"
-                    value={editingHouse.name}
-                    onChange={(e) =>
-                      setEditingHouse({ ...editingHouse, name: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">주소</label>
-                  <input
-                    type="text"
-                    value={editingHouse.address}
-                    onChange={(e) =>
-                      setEditingHouse({
-                        ...editingHouse,
-                        address: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">상세 설명</label>
-                <textarea
-                  value={editingHouse.description}
-                  onChange={(e) =>
-                    setEditingHouse({
-                      ...editingHouse,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
-                  rows={4}
-                  required
-                ></textarea>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-700 mb-2">면적</label>
-                  <input
-                    type="text"
-                    value={editingHouse.size}
-                    onChange={(e) =>
-                      setEditingHouse({ ...editingHouse, size: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">매칭 상태</label>
-                  <select
-                    value={editingHouse.status}
-                    onChange={(e) =>
-                      setEditingHouse({
-                        ...editingHouse,
-                        status: e.target.value as VacantHouse['status'],
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
-                    required
-                  >
-                    <option value="매칭대기">매칭대기</option>
-                    <option value="매칭완료">매칭완료</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">시설 정보</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    '주차장',
-                    '정원',
-                    '에어컨',
-                    '보안시설',
-                    '창고',
-                    '테라스',
-                  ].map((facility) => (
-                    <label
-                      key={facility}
-                      className="flex items-center space-x-2"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={editingHouse.facilities.includes(facility)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setEditingHouse({
-                              ...editingHouse,
-                              facilities: [
-                                ...editingHouse.facilities,
-                                facility,
-                              ],
-                            });
-                          } else {
-                            setEditingHouse({
-                              ...editingHouse,
-                              facilities: editingHouse.facilities.filter(
-                                (f) => f !== facility,
-                              ),
-                            });
-                          }
-                        }}
-                        className="form-checkbox h-5 w-5 text-[#364C84]"
-                      />
-                      <span>{facility}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">사진 변경</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    id="edit-house-image"
-                  />
-                  <label
-                    htmlFor="edit-house-image"
-                    className="cursor-pointer block text-center"
-                  >
-                    <div className="space-y-2">
-                      <i className="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
-                      <p className="text-gray-600">
-                        클릭하여 새로운 사진 업로드
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-button cursor-pointer whitespace-nowrap"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-[#364C84] hover:bg-[#2A3B68] text-white rounded-button cursor-pointer whitespace-nowrap"
-                >
-                  수정 완료
-                </button>
-              </div>
-            </form>
+              onCancel={() => setShowEditModal(false)}
+            />
           </div>
         </div>
       )}
+
       <GeminiVoiceChatButton></GeminiVoiceChatButton>
     </div>
   );
