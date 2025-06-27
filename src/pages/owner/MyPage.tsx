@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface VacantHouse {
   id: string;
@@ -12,9 +13,27 @@ interface VacantHouse {
   size: string;
   facilities: string[];
 }
-
 const MyPage: React.FC = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'waiting' | 'completed'>(
+    'waiting',
+  );
+
+  useEffect(() => {
+    if (location.pathname === '/owner/matchedlist') {
+      setActiveTab('completed');
+    } else {
+      setActiveTab('waiting');
+    }
+  }, [location.pathname]);
+
+  // 탭 변경 시 URL 업데이트
+  const handleTabChange = (tab: 'waiting' | 'completed') => {
+    setActiveTab(tab);
+    navigate(tab === 'waiting' ? '/owner/watinglist' : '/owner/matchedlist');
+  };
+
   const [houses, setHouses] = useState<VacantHouse[]>([
     {
       id: '1',
@@ -54,15 +73,18 @@ const MyPage: React.FC = () => {
       facilities: ['주차장', '텃밭', '에어컨', '보안시설', '창고', '테라스'],
     },
   ]);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedHouseId, setSelectedHouseId] = useState<string | null>(null);
+  const [editingHouse, setEditingHouse] = useState<VacantHouse | null>(null);
+
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDeleteHouse = (id: string) => {
     setSelectedHouseId(id);
     setShowDeleteModal(true);
   };
-
   const confirmDelete = () => {
     if (selectedHouseId) {
       setHouses(houses.filter((house) => house.id !== selectedHouseId));
@@ -70,99 +92,139 @@ const MyPage: React.FC = () => {
       setSelectedHouseId(null);
     }
   };
-
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case '매칭대기':
         return 'bg-yellow-100 text-yellow-800';
+      case '매칭진행중':
+        return 'bg-blue-100 text-blue-800';
       case '매칭완료':
         return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
-
   return (
     <div className="min-h-screen bg-[#FFFDF5]">
+      {/* 메인 콘텐츠 */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-[#364C84]">내 빈집 목록</h2>
-          <button
-            className="bg-[#364C84] hover:bg-[#2A3B68] text-white px-6 py-3 rounded-button flex items-center cursor-pointer whitespace-nowrap"
-            onClick={() => navigate('/owner/register')}
-          >
-            <i className="fas fa-plus mr-2"></i>
-            빈집 등록하기
-          </button>
-        </div>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-[#364C84]">내 빈집 목록</h2>
+            <button
+              onClick={() => setShowRegistrationModal(true)}
+              className="bg-[#364C84] hover:bg-[#2A3B68] text-white px-6 py-3 rounded-button flex items-center cursor-pointer whitespace-nowrap"
+            >
+              <i className="fas fa-plus mr-2"></i>
+              빈집 등록하기
+            </button>
+          </div>
 
+          <div className="flex space-x-4 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('waiting')}
+              className={`py-3 px-6 font-medium whitespace-nowrap ${
+                activeTab === 'waiting'
+                  ? 'text-[#364C84] border-b-2 border-[#364C84]'
+                  : 'text-gray-500 hover:text-[#364C84]'
+              }`}
+            >
+              매칭 대기중인 빈집
+            </button>
+            <button
+              onClick={() => setActiveTab('completed')}
+              className={`py-3 px-6 font-medium whitespace-nowrap ${
+                activeTab === 'completed'
+                  ? 'text-[#364C84] border-b-2 border-[#364C84]'
+                  : 'text-gray-500 hover:text-[#364C84]'
+              }`}
+            >
+              매칭 완료된 빈집
+            </button>
+          </div>
+        </div>
         {/* 빈집 목록 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {houses.map((house) => (
-            <div
-              key={house.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={house.image}
-                  alt={house.name}
-                  className="w-full h-full object-cover object-top"
-                />
-                <span
-                  className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(house.status)}`}
-                >
-                  {house.status}
-                </span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#364C84] mb-2">
-                  {house.name}
-                </h3>
-                <p className="text-gray-600 mb-4">{house.address}</p>
-                <div className="mb-4">
-                  <p className="text-sm text-gray-500">
-                    등록일: {house.registeredDate}
-                  </p>
-                  <p className="text-sm text-gray-500">면적: {house.size}</p>
+          {houses
+            .filter((house) =>
+              activeTab === 'waiting'
+                ? house.status === '매칭대기' || house.status === '매칭진행중'
+                : house.status === '매칭완료',
+            )
+            .map((house) => (
+              <div
+                key={house.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={house.image}
+                    alt={house.name}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <span
+                    className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(house.status)}`}
+                  >
+                    {house.status}
+                  </span>
                 </div>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {house.facilities.map((facility, index) => (
-                    <span
-                      key={index}
-                      className="bg-[#E7F1A8] text-[#364C84] text-sm px-3 py-1 rounded-full"
-                    >
-                      {facility}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex justify-between items-center">
-                  {/* 매칭완료가 아니면 수정/삭제 버튼 노출 */}
-                  {house.status !== '매칭완료' ? (
-                    <>
-                      <button className="text-[#364C84] hover:text-[#2A3B68] font-medium flex items-center cursor-pointer whitespace-nowrap">
-                        <i className="fas fa-edit mr-2"></i>
-                        수정하기
-                      </button>
-                      <button
-                        onClick={() => handleDeleteHouse(house.id)}
-                        className="text-red-600 hover:text-red-700 font-medium flex items-center cursor-pointer whitespace-nowrap"
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-[#364C84] mb-2">
+                    {house.name}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{house.address}</p>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500">
+                      등록일: {house.registeredDate}
+                    </p>
+                    <p className="text-sm text-gray-500">면적: {house.size}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {house.facilities.map((facility, index) => (
+                      <span
+                        key={index}
+                        className="bg-[#E7F1A8] text-[#364C84] text-sm px-3 py-1 rounded-full"
                       >
-                        <i className="fas fa-trash-alt mr-2"></i>
-                        삭제하기
-                      </button>
-                    </>
-                  ) : (
-                    <span className="text-[#95B1EE] font-semibold text-sm">
-                      매칭완료된 집은 <br></br>수정/삭제 불가
-                    </span>
-                  )}
+                        {facility}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex justify-between items-center">
+                    {activeTab === 'waiting' ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            const house = houses.find((h) => h.id === house.id);
+                            setEditingHouse(house);
+                            setShowEditModal(true);
+                          }}
+                          className="text-[#364C84] hover:text-[#2A3B68] font-medium flex items-center cursor-pointer whitespace-nowrap"
+                        >
+                          <i className="fas fa-edit mr-2"></i>
+                          수정하기
+                        </button>
+                        <button
+                          onClick={() => handleDeleteHouse(house.id)}
+                          className="text-red-600 hover:text-red-700 font-medium flex items-center cursor-pointer whitespace-nowrap"
+                        >
+                          <i className="fas fa-trash-alt mr-2"></i>
+                          삭제하기
+                        </button>
+                      </>
+                    ) : (
+                      <div className="flex items-center text-green-600">
+                        <i className="fas fa-check-circle mr-2"></i>
+                        매칭 완료
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
+
       {/* 삭제 확인 모달 */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -190,8 +252,201 @@ const MyPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 빈집 수정 모달 */}
+      {showEditModal && editingHouse && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 my-8">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-[#364C84]">
+                빈집 정보 수정
+              </h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <i className="fas fa-times text-xl"></i>
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Here you would update the house information
+                setShowEditModal(false);
+              }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-700 mb-2">건물 이름</label>
+                  <input
+                    type="text"
+                    value={editingHouse.name}
+                    onChange={(e) =>
+                      setEditingHouse({ ...editingHouse, name: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">주소</label>
+                  <input
+                    type="text"
+                    value={editingHouse.address}
+                    onChange={(e) =>
+                      setEditingHouse({
+                        ...editingHouse,
+                        address: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">상세 설명</label>
+                <textarea
+                  value={editingHouse.description}
+                  onChange={(e) =>
+                    setEditingHouse({
+                      ...editingHouse,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
+                  rows={4}
+                  required
+                ></textarea>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-700 mb-2">면적</label>
+                  <input
+                    type="text"
+                    value={editingHouse.size}
+                    onChange={(e) =>
+                      setEditingHouse({ ...editingHouse, size: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">매칭 상태</label>
+                  <select
+                    value={editingHouse.status}
+                    onChange={(e) =>
+                      setEditingHouse({
+                        ...editingHouse,
+                        status: e.target.value as VacantHouse['status'],
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#364C84]"
+                    required
+                  >
+                    <option value="매칭대기">매칭대기</option>
+                    <option value="매칭진행중">매칭진행중</option>
+                    <option value="매칭완료">매칭완료</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">시설 정보</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    '주차장',
+                    '정원',
+                    '에어컨',
+                    '보안시설',
+                    '창고',
+                    '테라스',
+                  ].map((facility) => (
+                    <label
+                      key={facility}
+                      className="flex items-center space-x-2"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={editingHouse.facilities.includes(facility)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditingHouse({
+                              ...editingHouse,
+                              facilities: [
+                                ...editingHouse.facilities,
+                                facility,
+                              ],
+                            });
+                          } else {
+                            setEditingHouse({
+                              ...editingHouse,
+                              facilities: editingHouse.facilities.filter(
+                                (f) => f !== facility,
+                              ),
+                            });
+                          }
+                        }}
+                        className="form-checkbox h-5 w-5 text-[#364C84]"
+                      />
+                      <span>{facility}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">사진 변경</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="edit-house-image"
+                  />
+                  <label
+                    htmlFor="edit-house-image"
+                    className="cursor-pointer block text-center"
+                  >
+                    <div className="space-y-2">
+                      <i className="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
+                      <p className="text-gray-600">
+                        클릭하여 새로운 사진 업로드
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-button cursor-pointer whitespace-nowrap"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-[#364C84] hover:bg-[#2A3B68] text-white rounded-button cursor-pointer whitespace-nowrap"
+                >
+                  수정 완료
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Gemini AI 음성 챗봇 버튼 */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button className="bg-[#364C84] hover:bg-[#2A3B68] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg cursor-pointer whitespace-nowrap group relative">
+          <i className="fas fa-microphone text-xl group-hover:hidden"></i>
+          <i className="fas fa-comments text-xl hidden group-hover:block"></i>
+          <span className="absolute -top-10 right-0 bg-white text-[#364C84] px-3 py-1 rounded-lg shadow-md text-sm whitespace-nowrap hidden group-hover:block">
+            AI 음성 상담
+          </span>
+        </button>
+      </div>
     </div>
   );
 };
-
 export default MyPage;

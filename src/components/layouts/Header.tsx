@@ -38,13 +38,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   빈집 등록
                 </Link>
                 <Link
-                  to="/owner/houses"
+                  to="/owner/watinglist"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   매칭 대기중인 빈집
                 </Link>
                 <Link
-                  to="/owner/matched"
+                  to="/owner/matchedlist"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   매칭 완료된 빈집
@@ -109,19 +109,19 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
             {userRole === 'owner' && (
               <>
                 <Link
-                  to="/owner/houses"
-                  className="text-white hover:text-[#E7F1A8] transition-colors"
-                >
-                  빈집 목록 조회
-                </Link>
-                <Link
                   to="/owner/register"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   빈집 등록
                 </Link>
                 <Link
-                  to="/owner/matched"
+                  to="/owner/watinglist"
+                  className="text-white hover:text-[#E7F1A8] transition-colors"
+                >
+                  매칭 대기중인 빈집
+                </Link>
+                <Link
+                  to="/owner/matchedlist"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   매칭 완료된 빈집

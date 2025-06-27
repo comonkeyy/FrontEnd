@@ -5,7 +5,6 @@ import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
 import Home from './pages/Home/Home';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
-import RegisterPropertyPage from './pages/RegisterPropertyPage/RegisterPropertyPage';
 import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
 
@@ -24,7 +23,8 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/register-property" element={<HouseRegisterForm />} />
           <Route path="/owner/mypage" element={<MyPage />} />
-          <Route path="/owner/register" element={<HouseRegisterForm />} />
+          <Route path="/owner/watinglist" element={<MyPage />} />
+          <Route path="/owner/matchedlist" element={<MyPage />} />
         </Routes>
         <Footer />
       </div>
