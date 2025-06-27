@@ -1,38 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
-import HeroSection from './components/HeroSection';
-import ServiceIntroSection from './components/ServiceIntroSection';
-import ProcessSection from './components/ProcessSession';
-import StatsSection from './components/StatsSection';
-import CommunitySection from './components/CommunitySection';
-import CTASection from './components/CTASection';
-import GeminiVoiceChatButton from './components/GeminiVoiceChatButton';
+import Home from './pages/Home/Home';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
-
-const Home = () => (
-  <>
-    <HeroSection />
-    <ServiceIntroSection />
-    <ProcessSection />
-    <StatsSection />
-    <CommunitySection />
-    <CTASection />
-    <GeminiVoiceChatButton />
-  </>
-);
+import RegisterPropertyPage from './pages/RegisterPropertyPage/RegisterPropertyPage';
 
 const App: React.FC = () => {
+  // 실제로는 로그인 후 userRole을 받아와야 합니다.
+  const [userRole, setUserRole] = useState<'owner' | 'worker' | 'guest'>(
+    'owner',
+  );
+
   return (
     <Router>
       <div className="min-h-screen bg-[#FFFDF5]">
-        <Header />
+        <Header userRole={userRole} />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home userRole={userRole} />} />
           <Route path="/signup" element={<SignUpPage />} />
-          {/* 필요시 다른 페이지도 추가 */}
+          <Route path="/register-property" element={<RegisterPropertyPage />} />
         </Routes>
         <Footer />
       </div>

@@ -11,14 +11,6 @@ const CTASection: React.FC = () => (
         <br />
         지금 바로 등록하고, 더 나은 지역사회를 만들어보세요.
       </p>
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <button className="bg-[#364C84] hover:bg-[#2A3B68] text-white font-medium px-6 py-3 rounded-button cursor-pointer whitespace-nowrap">
-          빈집 등록하기
-        </button>
-        <button className="bg-[#95B1EE] hover:bg-[#7D9FE9] text-white font-medium px-6 py-3 rounded-button cursor-pointer whitespace-nowrap">
-          복지사 매칭 신청
-        </button>
-      </div>
     </div>
   </section>
 );
