@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // 라우터 관련 컴포넌트 import
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
@@ -12,19 +12,31 @@ import CTASection from './components/CTASection';
 import GeminiVoiceChatButton from './components/GeminiVoiceChatButton';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
 
+const Home = () => (
+  <>
+    <HeroSection />
+    <ServiceIntroSection />
+    <ProcessSection />
+    <StatsSection />
+    <CommunitySection />
+    <CTASection />
+    <GeminiVoiceChatButton />
+  </>
+);
+
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#FFFDF5]">
-      <Header />
-      <HeroSection />
-      <ServiceIntroSection />
-      <ProcessSection />
-      <StatsSection />
-      <CommunitySection />
-      <CTASection />
-      <Footer />
-      <GeminiVoiceChatButton />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-[#FFFDF5]">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          {/* 필요시 다른 페이지도 추가 */}
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 

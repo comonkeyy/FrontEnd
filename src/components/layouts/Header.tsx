@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import LogInButton from '../LogInButton/LogInButton';
+import LogInButton from '../LoginButton/LoginButton';
 import SignupButton from '../SignUpButton/SignUpButton';
 
 const Header: React.FC = () => {
