@@ -28,9 +28,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
 
         {/* 데스크탑 메뉴 */}
         {userRole === 'guest' ? (
-          <nav className="hidden md:flex items-center space-x-4 ml-auto">
-            <LogInButton />
-            <SignupButton />
+          <nav className="hidden md:flex items-center ml-auto">
+            <div className="mr-4">
+              <LogInButton />
+            </div>
+            <div className="pr-2">
+              <SignupButton />
+            </div>
           </nav>
         ) : (
           <nav className="hidden md:flex items-center space-x-4 ml-auto">
