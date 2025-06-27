@@ -8,10 +8,10 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
 
-const App: React.FC = () => {
+const AppRouter: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
   const [userRole, setUserRole] = useState<'owner' | 'worker' | 'guest'>(
-    'owner',
+    'guest',
   );
 
   return (
@@ -30,6 +30,10 @@ const App: React.FC = () => {
       </div>
     </Router>
   );
+};
+
+const App: React.FC = () => {
+  return <AppRouter />;
 };
 
 export default App;
