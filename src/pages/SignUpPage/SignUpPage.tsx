@@ -32,8 +32,14 @@ function RoleSelectModal({
   );
 }
 
-// 주소 입력 모달(기존과 동일)
-function AddressInput() {
+// 주소 입력 모달
+function AddressInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const addressRef = useRef<HTMLInputElement>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const popupWrapRef = useRef<HTMLDivElement>(null);
@@ -45,9 +51,7 @@ function AddressInput() {
       // @ts-ignore
       new window.daum.Postcode({
         oncomplete: function (data: any) {
-          if (addressRef.current) {
-            addressRef.current.value = data.roadAddress;
-          }
+          onChange(data.roadAddress);
           setModalOpen(false);
         },
         onclose: function () {
@@ -66,6 +70,7 @@ function AddressInput() {
         ref={addressRef}
         type="text"
         placeholder="집 주소"
+        value={value}
         onClick={handleClick}
         readOnly
         style={{ cursor: 'pointer' }}
@@ -88,14 +93,35 @@ export default function SignUpPage() {
   const [role, setRole] = useState<'owner' | 'worker' | ''>('');
   const [roleModalOpen, setRoleModalOpen] = useState(true);
 
+  // 입력값 상태
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [userid, setUserid] = useState('');
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [email, setEmail] = useState('');
+
+  // 비밀번호 일치 여부
+  const passwordError = password && password2 && password !== password2;
+
+  // 모든 필수 입력값이 채워졌는지 + 비밀번호 일치해야만 활성화
+  const isFormValid =
+    !!role &&
+    !!name &&
+    !!phone &&
+    !!userid &&
+    !!password &&
+    !!password2 &&
+    !!email &&
+    !passwordError;
+
   // 폼 제출
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role) {
-      alert('가입 유형을 선택해 주세요.');
-      return;
-    }
+    if (!isFormValid) return;
+    if (!window.confirm('정말로 가입하겠습니까?')) return;
     alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
+    // 실제 회원가입 API 호출 등 추가
   };
 
   // 역할별 안내문구/스타일 분기
@@ -160,6 +186,8 @@ export default function SignUpPage() {
                 id="name"
                 type="text"
                 placeholder="이름"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
@@ -171,23 +199,8 @@ export default function SignUpPage() {
                 id="phone"
                 type="text"
                 placeholder="휴대폰 번호"
-                className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
-              />
-            </div>
-            <div className="signup-form-group flex flex-col gap-2">
-              <label htmlFor="address" className="font-bold text-[#364C84]">
-                집 주소
-              </label>
-              <AddressInput />
-            </div>
-            <div className="signup-form-group flex flex-col gap-2">
-              <label htmlFor="address2" className="font-bold text-[#364C84]">
-                상세 주소
-              </label>
-              <input
-                id="address2"
-                type="text"
-                placeholder="상세 주소"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
@@ -199,6 +212,8 @@ export default function SignUpPage() {
                 id="userid"
                 type="text"
                 placeholder="아이디"
+                value={userid}
+                onChange={(e) => setUserid(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
@@ -210,6 +225,8 @@ export default function SignUpPage() {
                 id="password"
                 type="password"
                 placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
@@ -221,8 +238,15 @@ export default function SignUpPage() {
                 id="password2"
                 type="password"
                 placeholder="비밀번호 확인"
+                value={password2}
+                onChange={(e) => setPassword2(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
+              {passwordError && (
+                <span className="text-red-500 text-sm font-semibold mt-1">
+                  비밀번호가 일치하지 않습니다.
+                </span>
+              )}
             </div>
             <div className="signup-form-group full flex flex-col gap-2 col-span-2">
               <label htmlFor="email" className="font-bold text-[#364C84]">
@@ -232,15 +256,23 @@ export default function SignUpPage() {
                 id="email"
                 type="email"
                 placeholder="이메일"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
           </div>
-          {/* 역할도 함께 전송 */}
           <input type="hidden" name="role" value={role} />
           <button
             type="submit"
-            className="w-full mt-4 py-3 rounded-lg bg-[#364C84] text-white font-bold text-lg border-2 border-[#364C84] hover:bg-[#2A3B68] hover:border-[#364C84] transition-colors shadow"
+            disabled={!isFormValid}
+            className={`w-full mt-4 py-3 rounded-lg font-bold text-lg border-2 transition-colors shadow
+              ${
+                isFormValid
+                  ? 'bg-[#364C84] text-white border-[#364C84] hover:bg-[#2A3B68]'
+                  : 'bg-[#95B1EE] text-white border-[#95B1EE] cursor-not-allowed'
+              }
+            `}
           >
             작성 완료 및 저장하기
           </button>

@@ -9,7 +9,34 @@
   --color-input-border: #95b1ee;
   --color-input-bg: #fffdf5;
 }
-
+.login-role-select {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  justify-content: center;
+}
+.role-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid #95b1ee;
+  background: #fffdf5;
+  color: #364c84;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border 0.2s;
+}
+.role-btn.active,
+.role-btn:hover {
+  background: #364c84;
+  color: #fff;
+  border-color: #364c84;
+}
 .modal {
   position: fixed;
   inset: 0;

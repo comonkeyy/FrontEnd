@@ -10,12 +10,14 @@ interface SignInProps {
 export default function SignIn({ isOpen, close }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // 역할 상태 추가
+  const [role, setRole] = useState<'owner' | 'worker'>('owner');
 
   const loginClickHandler = () => {
     fetch('http://10.58.2.17:8000/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, role }),
     })
       .then((res) => res.json())
       .then((res) => console.log(res));
@@ -31,6 +33,23 @@ export default function SignIn({ isOpen, close }: SignInProps) {
         </span>
         <div className="modalContents">
           <h2>로그인</h2>
+          {/* 역할 선택 UI */}
+          <div className="login-role-select">
+            <button
+              type="button"
+              className={`role-btn ${role === 'owner' ? 'active' : ''}`}
+              onClick={() => setRole('owner')}
+            >
+              집 소유자
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === 'worker' ? 'active' : ''}`}
+              onClick={() => setRole('worker')}
+            >
+              복지사
+            </button>
+          </div>
           <input
             name="email"
             className="loginId"
