@@ -1,0 +1,9 @@
+.admin-page {
+  padding: 40px;
+  text-align: center;
+}
+
+.admin-page h1 {
+  font-size: 2rem;
+  margin-bottom: 16px;
+}

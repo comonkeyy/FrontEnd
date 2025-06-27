@@ -11,10 +11,10 @@ import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
 import ReviewPage from './pages/ReviewPage/Review';
 import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
 
-const App: React.FC = () => {
+const AppRouter: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
   const [userRole, setUserRole] = useState<'owner' | 'worker' | 'guest'>(
-    'worker',
+    'guest',
   );
 
   return (
@@ -36,6 +36,10 @@ const App: React.FC = () => {
       </div>
     </Router>
   );
+};
+
+const App: React.FC = () => {
+  return <AppRouter />;
 };
 
 export default App;
