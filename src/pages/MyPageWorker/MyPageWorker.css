@@ -1,0 +1,96 @@
+.container {
+  background: #fffdf5;
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  color: #364c84;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.status-summary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.status-card {
+  background: #fffdf5;
+  border: 1px solid #95b1ee;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.status-label {
+  color: #364c84;
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.status-count {
+  color: #364c84;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.match-list {
+  width: 100%;
+  max-width: 600px;
+}
+
+.match-card {
+  background: #fffdf5;
+  border: 1px solid #95b1ee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.match-status {
+  background: #e7f1a8;
+  color: #364c84;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.match-address {
+  color: #364c84;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.match-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.match-info span {
+  color: #364c84;
+  font-size: 0.9rem;
+}
