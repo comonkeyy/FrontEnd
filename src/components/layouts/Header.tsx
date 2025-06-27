@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import LogInButton from '../LoginButton/LoginButton';
 import SignupButton from '../SignUpButton/SignUpButton';
+import logo from '../../assets/logo.png';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,9 +11,14 @@ const Header: React.FC = () => {
     <header className="bg-[#364C84] text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center flex-shrink-0">
-          <h1 className="text-2xl font-bold whitespace-nowrap">
-            의성 빈집-복지사 매칭
-          </h1>
+          <Link to="/">
+            <img
+              src={logo}
+              alt="의성희망둥지 로고"
+              className="h-auto w-16 md:w-48 mr-2 transition-transform duration-200 hover:scale-110"
+              style={{ objectFit: 'contain' }}
+            />
+          </Link>
         </div>
         <nav className="hidden md:flex items-center space-x-4 ml-auto">
           <a
