@@ -9,6 +9,7 @@ import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
 import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
 import ReviewPage from './pages/ReviewPage/Review';
+import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
 
 const App: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/owner/matchedlist" element={<MyPage />} />
           <Route path="/request" element={<MatchRequestPage />} />
           <Route path="/review" element={<ReviewPage />} />
+          <Route path="/complete" element={<MatchCompletePage />} />
         </Routes>
         <Footer />
       </div>

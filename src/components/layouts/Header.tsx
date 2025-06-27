@@ -78,7 +78,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   to="/request"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
-                  복지사 매칭
+                  빈 집 찾기
+                </Link>
+                <Link
+                  to="/complete"
+                  className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+                >
+                  빈 집 매칭
                 </Link>
                 <Link
                   to="/review"
