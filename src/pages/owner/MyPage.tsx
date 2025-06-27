@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // 빈집 데이터 타입을 정의합니다.
 interface VacantHouse {
@@ -14,6 +15,7 @@ interface VacantHouse {
 }
 
 const MyPage: React.FC = () => {
+  const navigate = useNavigate();
   // Mock 데이터를 상태로 관리합니다. 실제로는 API로 받아옵니다.
   const [houses, setHouses] = useState<VacantHouse[]>([
     {
@@ -96,11 +98,10 @@ const MyPage: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-[#364C84]">내 빈집 목록</h2>
           <button
-            onClick={() => setShowRegistrationModal(true)}
-            className="bg-[#364C84] hover:bg-[#2A3B68] text-white px-6 py-3 rounded-lg flex items-center cursor-pointer whitespace-nowrap"
+            className="bg-[#364C84] hover:bg-[#2A3B68] text-white px-6 py-3 rounded-button flex items-center cursor-pointer whitespace-nowrap"
+            onClick={() => navigate('/owner/register')}
           >
-            {/* FontAwesome 아이콘을 사용하려면 index.html에 CDN 추가가 필요합니다 */}
-            {/* <i className="fas fa-plus mr-2"></i> */}
+            <i className="fas fa-plus mr-2"></i>
             빈집 등록하기
           </button>
         </div>

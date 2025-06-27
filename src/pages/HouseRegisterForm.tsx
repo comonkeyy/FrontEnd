@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type HouseRegistration = {
   name: string;
@@ -66,12 +67,10 @@ const AddressInput: React.FC<{
       />
       {modalOpen && (
         <>
-          {/* 오버레이 */}
           <div
             className="fixed inset-0 bg-black/40 z-50"
             onClick={() => setModalOpen(false)}
           />
-          {/* 모달 본문 */}
           <div className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-[95vw] max-w-xl h-[500px] flex flex-col overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b">
               <span className="font-bold text-[#364C84]">도로명 주소 검색</span>
@@ -107,6 +106,11 @@ const HouseRegisterForm: React.FC = () => {
     facilities: [],
   });
 
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -128,11 +132,102 @@ const HouseRegisterForm: React.FC = () => {
     }));
   };
 
+  // 사진 추가 (누적)
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newFiles = Array.from(files);
+      const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+
+      // 기존 파일들과 새 파일들을 합침 (누적)
+      const updatedFiles = [...imageFiles, ...newFiles];
+      const updatedPreviews = [...imagePreviews, ...newUrls];
+
+      setImageFiles(updatedFiles);
+      setImagePreviews(updatedPreviews);
+
+      // FileList 업데이트
+      const dt = new DataTransfer();
+      updatedFiles.forEach((file) => dt.items.add(file));
+
+      setForm((prev) => ({
+        ...prev,
+        images: dt.files,
+      }));
+    }
+
+    // input value 초기화 (같은 파일 다시 선택 가능)
+    e.target.value = '';
+  };
+
+  // 사진 삭제
+  const handleImageDelete = (index: number) => {
+    URL.revokeObjectURL(imagePreviews[index]);
+
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+
+    setImagePreviews(newPreviews);
+    setImageFiles(newFiles);
+
+    const dt = new DataTransfer();
+    newFiles.forEach((file) => dt.items.add(file));
+
     setForm((prev) => ({
       ...prev,
-      images: e.target.files,
+      images: dt.files,
     }));
+  };
+
+  // 드래그 시작
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // 드래그 종료
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  // 드롭 허용
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  // 드롭 처리
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newFiles = [...imageFiles];
+    const newPreviews = [...imagePreviews];
+
+    // 배열 요소 위치 변경
+    const draggedFile = newFiles[draggedIndex];
+    const draggedPreview = newPreviews[draggedIndex];
+
+    newFiles.splice(draggedIndex, 1);
+    newPreviews.splice(draggedIndex, 1);
+
+    newFiles.splice(dropIndex, 0, draggedFile);
+    newPreviews.splice(dropIndex, 0, draggedPreview);
+
+    setImageFiles(newFiles);
+    setImagePreviews(newPreviews);
+
+    // FileList 업데이트
+    const dt = new DataTransfer();
+    newFiles.forEach((file) => dt.items.add(file));
+
+    setForm((prev) => ({
+      ...prev,
+      images: dt.files,
+    }));
+
+    setDraggedIndex(null);
   };
 
   const handleAddressChange = (addr: string) => {
@@ -144,8 +239,9 @@ const HouseRegisterForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 제출 로직
-    console.log('빈집 등록 정보:', form);
+    if (!window.confirm('정말로 등록하겠습니까?')) return;
+    alert('등록이 완료되었습니다.');
+    navigate('/owner/mypage');
   };
 
   return (
@@ -317,17 +413,56 @@ const HouseRegisterForm: React.FC = () => {
               onChange={handleImageChange}
               className="hidden"
               id="house-images"
-              required
+              required={imagePreviews.length === 0}
             />
             <label htmlFor="house-images" className="cursor-pointer">
               <div className="space-y-4">
                 <i className="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
                 <p className="text-gray-600">클릭하여 사진을 업로드하세요</p>
-                <p className="text-sm text-gray-500">
-                  (최대 5장까지 등록 가능)
-                </p>
+                <p className="text-sm text-gray-500">(드래그로 순서 변경)</p>
               </div>
             </label>
+            {/* 미리보기 영역 - 1:1 사이즈 + 삭제 기능 + 드래그앤드롭 */}
+            {imagePreviews.length > 0 && (
+              <div className="flex flex-wrap gap-4 justify-center mt-6">
+                {imagePreviews.map((url, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative cursor-move select-none ${
+                      draggedIndex === idx ? 'opacity-50' : ''
+                    }`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, idx)}
+                  >
+                    <img
+                      src={url}
+                      alt={`미리보기 ${idx + 1}`}
+                      className="w-32 h-32 object-cover rounded shadow aspect-square border-2 border-gray-200"
+                    />
+                    {/* 순서 표시 */}
+                    <div className="absolute top-2 left-2 bg-[#364C84] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                      {idx + 1}
+                    </div>
+                    {/* 삭제 버튼 */}
+                    <button
+                      type="button"
+                      onClick={() => handleImageDelete(idx)}
+                      className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold shadow-md transition-colors"
+                      aria-label={`이미지 ${idx + 1} 삭제`}
+                    >
+                      ×
+                    </button>
+                    {/* 드래그 아이콘 */}
+                    <div className="absolute bottom-2 right-2 bg-black/50 text-white rounded p-1">
+                      <i className="fas fa-grip-vertical text-xs"></i>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         {/* 상세 설명 */}
