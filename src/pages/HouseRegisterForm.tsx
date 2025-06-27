@@ -1,10 +1,94 @@
 import React, { useState, useRef } from 'react';
 
+const REGION_LIST = [
+  '의성읍',
+  '단촌면',
+  '점곡면',
+  '옥산면',
+  '사곡면',
+  '춘산면',
+  '가음면',
+  '금성면',
+  '봉양면',
+  '비안면',
+  '구천면',
+  '단밀면',
+  '단북면',
+  '안계면',
+  '다인면',
+  '신평면',
+  '안평면',
+  '안사면',
+];
+
+// 도로명 주소 입력 컴포넌트 (카카오 주소 모달)
+const AddressInput: React.FC<{
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ value, onChange }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const popupWrapRef = useRef<HTMLDivElement>(null);
+
+  const openModal = () => {
+    setModalOpen(true);
+    setTimeout(() => {
+      if (!popupWrapRef.current) return;
+      // @ts-ignore
+      new window.daum.Postcode({
+        oncomplete: function (data: any) {
+          onChange(data.roadAddress);
+          setModalOpen(false);
+        },
+        onclose: function () {
+          setModalOpen(false);
+        },
+        width: '100%',
+        height: '100%',
+      }).embed(popupWrapRef.current);
+    }, 0);
+  };
+
+  return (
+    <>
+      <input
+        type="text"
+        value={value}
+        placeholder="도로명 주소를 검색하세요"
+        readOnly
+        onClick={openModal}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
+        required
+      />
+      {modalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 z-50"
+            onClick={() => setModalOpen(false)}
+          />
+          <div className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-[95vw] max-w-xl h-[500px] flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <span className="font-bold text-[#364C84]">도로명 주소 검색</span>
+              <button
+                className="text-gray-400 hover:text-gray-700 text-xl"
+                onClick={() => setModalOpen(false)}
+                aria-label="닫기"
+              >
+                &times;
+              </button>
+            </div>
+            <div ref={popupWrapRef} className="flex-1" />
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
 const HouseRegisterForm: React.FC = () => {
   const [form, setForm] = useState({
     address: '',
     detailAddress: '',
-    area: '', // 평수 한 칸으로 변경
+    area: '',
     floorCount: '',
     region: '',
     description: '',
@@ -12,27 +96,6 @@ const HouseRegisterForm: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
-  const REGION_LIST = [
-    '의성읍',
-    '단촌면',
-    '점곡면',
-    '옥산면',
-    '사곡면',
-    '춘산면',
-    '가음면',
-    '금성면',
-    '봉양면',
-    '비안면',
-    '구천면',
-    '단밀면',
-    '단북면',
-    '안계면',
-    '다인면',
-    '신평면',
-    '안평면',
-    '안사면',
-  ];
 
   // 입력값 변경 핸들러
   const handleChange = (
@@ -42,6 +105,11 @@ const HouseRegisterForm: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // 주소값 변경 핸들러
+  const handleAddressChange = (addr: string) => {
+    setForm((prev) => ({ ...prev, address: addr }));
   };
 
   // 사진 추가 (누적)
@@ -113,13 +181,7 @@ const HouseRegisterForm: React.FC = () => {
     <section className="py-16 px-6 bg-[#FFFDF5] min-h-screen flex flex-col justify-center">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-[#364C84] mb-4">
-            복지사 매칭 조건 설정
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            원하시는 주거 조건을 설정해 주세요. 조건에 맞는 빈집을 매칭해
-            드립니다.
-          </p>
+          <h2 className="text-3xl font-bold text-[#364C84] mb-4">빈 집 등록</h2>
         </div>
         <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300">
           <form onSubmit={handleSubmit}>
@@ -135,23 +197,17 @@ const HouseRegisterForm: React.FC = () => {
                     htmlFor="address"
                     className="block text-gray-700 font-medium mb-2"
                   >
-                    기본 주소
+                    도로명 주소
                   </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
+                  <AddressInput
                     value={form.address}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
-                    placeholder="기본 주소를 입력하세요"
-                    required
+                    onChange={handleAddressChange}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="detailAddress"
-                    className="block text-gray-7 font-medium mb-2"
+                    className="block text-gray-700 font-medium mb-2"
                   >
                     상세 주소
                   </label>
@@ -316,8 +372,7 @@ const HouseRegisterForm: React.FC = () => {
               type="submit"
               className="w-full bg-[#95B1EE] text-[#364C84] py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200 !rounded-button cursor-pointer whitespace-nowrap flex items-center justify-center"
             >
-              <i className="fas fa-search mr-2"></i>
-              매칭 조건 저장하기
+              빈 집 등록하기
             </button>
           </form>
         </div>

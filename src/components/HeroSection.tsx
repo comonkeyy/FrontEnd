@@ -35,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ userRole }) => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   className="bg-[#E7F1A8] hover:bg-[#D9E68A] text-[#364C84] font-medium px-6 py-3 rounded-button cursor-pointer whitespace-nowrap"
-                  onClick={() => navigate('/owner/register')}
+                  onClick={() => navigate('/register-property')}
                 >
                   빈집 등록하기
                 </button>

@@ -109,7 +109,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
             {userRole === 'owner' && (
               <>
                 <Link
-                  to="/owner/register"
+                  to="/register-property"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   빈집 등록

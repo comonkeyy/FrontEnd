@@ -113,7 +113,7 @@ const MyPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-[#364C84]">내 빈집 목록</h2>
             <button
-              onClick={() => setShowRegistrationModal(true)}
+              onClick={() => navigate('/register-property')}
               className="bg-[#364C84] hover:bg-[#2A3B68] text-white px-6 py-3 rounded-button flex items-center cursor-pointer whitespace-nowrap"
             >
               <i className="fas fa-plus mr-2"></i>
