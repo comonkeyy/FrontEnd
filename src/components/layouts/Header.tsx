@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LogInButton from '../LoginButton/LoginButton';
-import SignupButton from '../SignUpButton/SignUpButton';
 import logo from '../../assets/logo.png';
 
 type HeaderProps = {
@@ -27,70 +25,74 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
         </div>
 
         {/* 데스크탑 메뉴 */}
-        {userRole === 'guest' ? (
-          <nav className="hidden md:flex items-center ml-auto">
-            <div className="mr-4">
-              <LogInButton />
-            </div>
-            <div className="pr-2">
-              <SignupButton />
-            </div>
-          </nav>
-        ) : (
-          <nav className="hidden md:flex items-center space-x-4 ml-auto">
-            <a
-              href="#"
-              className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
-            >
-              빈집 등록/조회
-            </a>
-            <a
-              href="#"
-              className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
-            >
-              복지사 매칭
-            </a>
-            <a
-              href="#"
-              className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
-            >
-              리뷰
-            </a>
-            <div className="relative group">
-              <button className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap flex items-center">
-                더보기 <i className="fas fa-chevron-down ml-1 text-xs"></i>
-              </button>
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-20">
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
-                >
-                  자주 묻는 질문
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
-                >
-                  분쟁 조정
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
-                >
-                  복지사 커뮤니티
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
-                >
-                  리모델링 지원
-                </a>
-              </div>
-            </div>
-            <LogInButton />
-            <SignupButton />
-          </nav>
-        )}
+        <nav className="hidden md:flex items-center space-x-6 ml-auto">
+          {userRole === 'owner' && (
+            <>
+              <Link
+                to="/owner/houses"
+                className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+              >
+                빈집 목록 조회
+              </Link>
+              <Link
+                to="/owner/register"
+                className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+              >
+                빈집 등록
+              </Link>
+              <Link
+                to="/owner/matched"
+                className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+              >
+                매칭 완료된 빈집
+              </Link>
+              <Link
+                to="/owner/mypage"
+                className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold ml-4 transition-colors whitespace-nowrap"
+              >
+                마이페이지
+              </Link>
+            </>
+          )}
+          {userRole === 'worker' && (
+            <>
+              <Link
+                to="/worker/match"
+                className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+              >
+                복지사 매칭
+              </Link>
+              <Link
+                to="/worker/review"
+                className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
+              >
+                리뷰
+              </Link>
+              <Link
+                to="/worker/mypage"
+                className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold ml-4 transition-colors whitespace-nowrap"
+              >
+                마이페이지
+              </Link>
+            </>
+          )}
+          {userRole === 'guest' && (
+            <>
+              <Link
+                to="/login"
+                className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
+              >
+                로그인
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold ml-2 transition-colors whitespace-nowrap"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
+        </nav>
 
         {/* 모바일 메뉴 버튼 */}
         <div className="md:hidden">
@@ -109,56 +111,72 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
       {isMenuOpen && (
         <div className="md:hidden bg-[#364C84] py-4">
           <div className="container mx-auto px-4 flex flex-col space-y-4">
-            {userRole !== 'guest' && (
+            {userRole === 'owner' && (
               <>
-                <a
-                  href="#"
+                <Link
+                  to="/owner/houses"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
-                  빈집 등록/조회
-                </a>
-                <a
-                  href="#"
+                  빈집 목록 조회
+                </Link>
+                <Link
+                  to="/owner/register"
+                  className="text-white hover:text-[#E7F1A8] transition-colors"
+                >
+                  빈집 등록
+                </Link>
+                <Link
+                  to="/owner/matched"
+                  className="text-white hover:text-[#E7F1A8] transition-colors"
+                >
+                  매칭 완료된 빈집
+                </Link>
+                <Link
+                  to="/owner/mypage"
+                  className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
+                >
+                  마이페이지
+                </Link>
+              </>
+            )}
+            {userRole === 'worker' && (
+              <>
+                <Link
+                  to="/worker/match"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   복지사 매칭
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  to="/worker/review"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   리뷰
-                </a>
-                <div className="border-t border-gray-600 my-2"></div>
-                <a
-                  href="#"
-                  className="text-white hover:text-[#E7F1A8] transition-colors"
+                </Link>
+                <Link
+                  to="/worker/mypage"
+                  className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
                 >
-                  자주 묻는 질문
-                </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-[#E7F1A8] transition-colors"
-                >
-                  분쟁 조정
-                </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-[#E7F1A8] transition-colors"
-                >
-                  복지사 커뮤니티
-                </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-[#E7F1A8] transition-colors"
-                >
-                  리모델링 지원
-                </a>
-                <div className="border-t border-gray-600 my-2"></div>
+                  마이페이지
+                </Link>
               </>
             )}
-            <LogInButton />
-            <SignupButton />
+            {userRole === 'guest' && (
+              <>
+                <Link
+                  to="/login"
+                  className="bg-[#95B1EE] hover:bg-[#E7F1A8] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
+                >
+                  로그인
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold ml-0 transition-colors text-center"
+                >
+                  회원가입
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
