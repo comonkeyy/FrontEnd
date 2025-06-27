@@ -1,5 +1,58 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import './SignUpPage.css';
+
+function AddressInput() {
+  const addressRef = useRef<HTMLInputElement>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const popupWrapRef = useRef<HTMLDivElement>(null);
+
+  const handleClick = () => {
+    setModalOpen(true);
+
+    setTimeout(() => {
+      if (!popupWrapRef.current) return;
+      // @ts-ignore
+      new window.daum.Postcode({
+        oncomplete: function (data: any) {
+          if (addressRef.current) {
+            addressRef.current.value = data.roadAddress;
+          }
+          setModalOpen(false);
+        },
+        onclose: function () {
+          setModalOpen(false);
+        },
+        width: '100%',
+        height: '100%',
+      }).embed(popupWrapRef.current);
+    }, 0);
+  };
+
+  return (
+    <>
+      <input
+        id="address"
+        ref={addressRef}
+        type="text"
+        placeholder="집 주소"
+        onClick={handleClick}
+        readOnly
+        style={{ cursor: 'pointer' }}
+      />
+      {/* 모달 */}
+      {modalOpen && (
+        <>
+          {/* 백드롭 */}
+          <div className="modal-backdrop" onClick={() => setModalOpen(false)} />
+          {/* 모달창 */}
+          <div className="modal-address">
+            <div ref={popupWrapRef} style={{ width: '100%', height: '100%' }} />
+          </div>
+        </>
+      )}
+    </>
+  );
+}
 
 export default function SignUpPage() {
   return (
@@ -28,7 +81,7 @@ export default function SignUpPage() {
             </div>
             <div className="signup-form-group">
               <label htmlFor="address">집 주소</label>
-              <input id="address" type="text" placeholder="집 주소" />
+              <AddressInput />
             </div>
             <div className="signup-form-group">
               <label htmlFor="address2">상세 주소</label>
@@ -38,7 +91,6 @@ export default function SignUpPage() {
               <label htmlFor="userid">아이디</label>
               <input id="userid" type="text" placeholder="아이디" />
             </div>
-
             <div className="signup-form-group">
               <label htmlFor="password">비밀번호</label>
               <input id="password" type="password" placeholder="비밀번호" />
