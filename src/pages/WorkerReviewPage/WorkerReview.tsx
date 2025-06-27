@@ -4,7 +4,7 @@ interface VacantHouse {
   id: string;
   name: string;
   address: string;
-  status: '매칭대기' | '매칭진행중' | '매칭완료';
+  status: '매칭대기' | '매칭완료';
   registeredDate: string;
   image: string;
   description: string;
@@ -31,7 +31,7 @@ export const WorkerReview: React.FC = () => {
       id: '2',
       name: '모던 스타일 단독주택',
       address: '경상북도 의성군 의성읍 후죽리 456',
-      status: '매칭진행중',
+      status: '매칭대기',
       registeredDate: '2025-05-15',
       image:
         'https://readdy.ai/api/search-image?query=A%20modern%20Korean%20style%20house%20with%20minimalist%20design%2C%20large%20windows%2C%20and%20a%20small%20garden.%20The%20exterior%20combines%20traditional%20and%20contemporary%20elements%2C%20captured%20in%20bright%20daylight%20showing%20its%20clean%20lines%20and%20welcoming%20entrance&width=400&height=300&seq=house2&orientation=landscape',
@@ -73,8 +73,6 @@ export const WorkerReview: React.FC = () => {
     switch (status) {
       case '매칭대기':
         return 'bg-yellow-100 text-yellow-800';
-      case '매칭진행중':
-        return 'bg-blue-100 text-blue-800';
       case '매칭완료':
         return 'bg-green-100 text-green-800';
       default:
@@ -183,3 +181,5 @@ export const WorkerReview: React.FC = () => {
     </div>
   );
 };
+
+export default WorkerReview;

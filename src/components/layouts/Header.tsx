@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import LogInButton from '../LoginButton/LoginButton';
 import SignupButton from '../SignUpButton/SignUpButton';
@@ -10,6 +10,14 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // 실제 로그아웃 로직으로 교체하세요
+  const onLogout = () => {
+    // 예시: localStorage.removeItem('token');
+    alert('로그아웃 되었습니다.');
+    navigate('/'); // 로그아웃 후 메인으로 이동 (필요시)
+  };
 
   return (
     <header className="bg-[#364C84] text-white shadow-md">
@@ -55,6 +63,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 >
                   마이페이지
                 </Link>
+                {/* 로그아웃 버튼 추가 */}
+                <button
+                  onClick={onLogout}
+                  className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
+                >
+                  로그아웃
+                </button>
               </>
             )}
             {userRole === 'worker' && (
@@ -77,6 +92,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 >
                   마이페이지
                 </Link>
+                {/* 로그아웃 버튼 추가 */}
+                <button
+                  onClick={onLogout}
+                  className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
+                >
+                  로그아웃
+                </button>
               </>
             )}
           </nav>
@@ -132,6 +154,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 >
                   마이페이지
                 </Link>
+                {/* 로그아웃 버튼 추가 */}
+                <button
+                  onClick={onLogout}
+                  className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
+                >
+                  로그아웃
+                </button>
               </>
             )}
             {userRole === 'worker' && (
@@ -154,6 +183,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 >
                   마이페이지
                 </Link>
+                {/* 로그아웃 버튼 추가 */}
+                <button
+                  onClick={onLogout}
+                  className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
+                >
+                  로그아웃
+                </button>
               </>
             )}
             {userRole === 'guest' && (

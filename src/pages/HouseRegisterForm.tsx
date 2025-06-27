@@ -1,3 +1,4 @@
+import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useRef } from 'react';
 
 const REGION_LIST = [
@@ -376,6 +377,7 @@ const HouseRegisterForm: React.FC = () => {
             </button>
           </form>
         </div>
+        <GeminiVoiceChatButton></GeminiVoiceChatButton>
       </div>
     </section>
   );

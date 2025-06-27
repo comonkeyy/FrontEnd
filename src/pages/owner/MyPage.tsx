@@ -1,4 +1,5 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -92,13 +93,12 @@ const MyPage: React.FC = () => {
       setSelectedHouseId(null);
     }
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case '매칭대기':
         return 'bg-yellow-100 text-yellow-800';
-      case '매칭진행중':
-        return 'bg-blue-100 text-blue-800';
+
       case '매칭완료':
         return 'bg-green-100 text-green-800';
       default:
@@ -149,7 +149,7 @@ const MyPage: React.FC = () => {
           {houses
             .filter((house) =>
               activeTab === 'waiting'
-                ? house.status === '매칭대기' || house.status === '매칭진행중'
+                ? house.status === '매칭대기'
                 : house.status === '매칭완료',
             )
             .map((house) => (
@@ -347,7 +347,6 @@ const MyPage: React.FC = () => {
                     required
                   >
                     <option value="매칭대기">매칭대기</option>
-                    <option value="매칭진행중">매칭진행중</option>
                     <option value="매칭완료">매칭완료</option>
                   </select>
                 </div>
@@ -436,16 +435,7 @@ const MyPage: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Gemini AI 음성 챗봇 버튼 */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button className="bg-[#364C84] hover:bg-[#2A3B68] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg cursor-pointer whitespace-nowrap group relative">
-          <i className="fas fa-microphone text-xl group-hover:hidden"></i>
-          <i className="fas fa-comments text-xl hidden group-hover:block"></i>
-          <span className="absolute -top-10 right-0 bg-white text-[#364C84] px-3 py-1 rounded-lg shadow-md text-sm whitespace-nowrap hidden group-hover:block">
-            AI 음성 상담
-          </span>
-        </button>
-      </div>
+      <GeminiVoiceChatButton></GeminiVoiceChatButton>
     </div>
   );
 };

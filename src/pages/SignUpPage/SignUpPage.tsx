@@ -1,3 +1,4 @@
+import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useRef } from 'react';
 
 // 역할 선택 모달
@@ -277,7 +278,9 @@ export default function SignUpPage() {
             작성 완료 및 저장하기
           </button>
         </form>
+        <GeminiVoiceChatButton></GeminiVoiceChatButton>
       </div>
+
       {/* 모달 CSS */}
       <style>{`
           .modal-backdrop {
