@@ -5,9 +5,9 @@ const Footer: React.FC = () => (
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="text-xl font-bold mb-4">의성 빈집-복지사 매칭</h3>
+          <h3 className="text-xl font-bold mb-4">의성희망둥지 서비스</h3>
           <p className="mb-4">
-            빈집과 복지사를 연결하는 지역 기반 플랫폼입니다.
+            빈집과 복지사를 연결하는 <br></br>지역 기반 플랫폼입니다.
           </p>
           <div className="flex space-x-4">
             <a
@@ -103,7 +103,7 @@ const Footer: React.FC = () => (
         </div>
       </div>
       <div className="border-t border-gray-600 mt-8 pt-8 text-center text-sm">
-        <p>&copy; 2025 의성 빈집-복지사 매칭 플랫폼. All rights reserved.</p>
+        <p>&copy; 2025 의성희망둥지. All rights reserved.</p>
       </div>
     </div>
   </footer>

@@ -28,9 +28,6 @@ const ServiceIntroSection: React.FC = () => (
               빈집 소유주는 쉽게 자신의 빈집을 등록하고 관리할 수 있습니다.
               위치, 상태, 임대 가능 여부 등 상세 정보를 입력하세요.
             </p>
-            <button className="text-[#364C84] font-medium flex items-center cursor-pointer whitespace-nowrap">
-              자세히 보기 <i className="fas fa-arrow-right ml-2"></i>
-            </button>
           </div>
         </div>
         {/* 카드 2 */}
@@ -50,9 +47,6 @@ const ServiceIntroSection: React.FC = () => (
               복지사의 필요와 선호도에 맞는 빈집을 연결해 드립니다. 지역, 크기,
               시설 등 다양한 조건으로 검색이 가능합니다.
             </p>
-            <button className="text-[#364C84] font-medium flex items-center cursor-pointer whitespace-nowrap">
-              자세히 보기 <i className="fas fa-arrow-right ml-2"></i>
-            </button>
           </div>
         </div>
         {/* 카드 3 */}
@@ -72,9 +66,6 @@ const ServiceIntroSection: React.FC = () => (
               빈집의 상태를 개선하기 위한 리모델링, 정비, 안전 점검 등을
               지원합니다. 전문가의 도움을 받아보세요.
             </p>
-            <button className="text-[#364C84] font-medium flex items-center cursor-pointer whitespace-nowrap">
-              자세히 보기 <i className="fas fa-arrow-right ml-2"></i>
-            </button>
           </div>
         </div>
       </div>

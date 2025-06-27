@@ -5,7 +5,7 @@ const StatsSection: React.FC = () => (
     <div className="container mx-auto px-4">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-[#364C84] mb-4">
-          의성 빈집-복지사 매칭 현황
+          의성희망둥지 매칭 현황
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           꾸준히 증가하는 빈집 활용, 복지사 정착, 지역 활성화의 흐름을 숫자로
