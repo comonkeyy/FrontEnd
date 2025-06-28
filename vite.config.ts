@@ -12,10 +12,10 @@ export default defineConfig({
       '/api': {
         target: 'http://10.58.2.17:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  }
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   plugins: [react()],
   resolve: {
     alias: {
