@@ -61,11 +61,6 @@ const CommunitySection: React.FC = () => (
           </div>
         </div>
       </div>
-      <div className="text-center mt-8">
-        <button className="bg-[#95B1EE] hover:bg-[#7D9FE9] text-white px-6 py-3 rounded-button cursor-pointer whitespace-nowrap">
-          더 많은 이야기 보기
-        </button>
-      </div>
     </div>
   </section>
 );

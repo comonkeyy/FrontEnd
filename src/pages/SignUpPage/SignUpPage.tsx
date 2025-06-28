@@ -1,4 +1,3 @@
-import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useRef } from 'react';
 
 // 역할 선택 모달
@@ -119,75 +118,47 @@ export default function SignUpPage() {
     if (!isFormValid) return;
     if (!window.confirm('정말로 가입하겠습니까?')) return;
 
-    // --- 더미 데이터 사용 부분 시작 ---
+    // --- localStorage에 회원 정보 저장 ---
     try {
-      // 2초 지연을 시뮬레이션하여 실제 네트워크 요청처럼 보이게 함
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 기존 users 배열 불러오기 (없으면 빈 배열)
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-      // 가상의 성공 응답
-      const mockResponse = {
-        success: true,
-        message: '회원가입이 성공적으로 완료되었습니다.',
+      // 새 회원 객체 생성
+      const newUser = {
+        name,
+        phone,
+        userid,
+        password,
+        email,
+        role,
+        address: role === 'owner' ? address : '', // 소유주만 주소 저장
       };
-      // 가상의 실패 응답 (주석 처리하고 싶을 때 활성화)
-      // const mockResponse = { success: false, message: '더미 데이터: 이미 존재하는 아이디입니다.' };
 
-      if (mockResponse.success) {
-        alert(
-          `${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료! (더미 데이터)`,
-        );
-        localStorage.setItem('userRole', role); // 로컬 스토리지에 역할 저장
-        if (role === 'owner') {
-          window.location.href = '/owner/mypage';
-        } else {
-          window.location.href = '/worker/main';
-        }
+      // 중복 아이디 체크 (userid)
+      const isDuplicate = users.some((user: any) => user.userid === userid);
+      if (isDuplicate) {
+        alert('이미 존재하는 아이디입니다.');
+        return;
+      }
+
+      // users 배열에 새 회원 추가
+      users.push(newUser);
+
+      // localStorage에 저장
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // --- 회원가입 성공 알림 및 페이지 이동 ---
+      alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
+      localStorage.setItem('userRole', role); // 역할 저장 (선택)
+      if (role === 'owner') {
+        window.location.href = '/owner/mypage';
       } else {
-        alert(`회원가입 실패: ${mockResponse.message}`);
+        window.location.href = '/worker/main';
       }
     } catch (error) {
-      console.error('더미 데이터 처리 오류:', error);
-      alert('더미 데이터 처리 중 오류가 발생했습니다.');
+      console.error('회원가입 처리 오류:', error);
+      alert('회원가입 처리 중 오류가 발생했습니다.');
     }
-    // --- 더미 데이터 사용 부분 끝 ---
-
-    // 실제 백엔드 연동 시 위의 더미 데이터 관련 코드를 제거하고 아래 주석을 해제하세요.
-    /*
-    try {
-      const response = await fetch('http://localhost:8000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          phone,
-          user_id: userid,
-          password,
-          email,
-          role: role === 'owner' ? 'owner' : 'worker',
-          address: role === 'owner' ? address : undefined,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
-        localStorage.setItem('userRole', role);
-        if (role === 'owner') {
-          window.location.href = '/owner/mypage';
-        } else {
-          window.location.href = '/worker/main';
-        }
-      } else {
-        alert(`회원가입 실패: ${result.message || '알 수 없는 오류'}`);
-      }
-    } catch (error) {
-      console.error('회원가입 오류:', error);
-      alert('회원가입 중 네트워크 오류가 발생했습니다.');
-    }
-    */
   };
 
   const infoTitle =
@@ -349,7 +320,6 @@ export default function SignUpPage() {
             작성 완료 및 저장하기
           </button>
         </form>
-        <GeminiVoiceChatButton></GeminiVoiceChatButton>
       </div>
 
       <style>{`

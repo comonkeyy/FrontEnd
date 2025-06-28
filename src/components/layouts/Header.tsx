@@ -7,17 +7,21 @@ import SignupButton from '../SignUpButton/SignUpButton';
 type HeaderProps = {
   userRole: 'owner' | 'worker' | 'guest';
   setUserRole: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
+  onLogin: (role: 'owner' | 'worker' | 'admin') => void;
+  onLogout: () => void;
 };
 
-const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
+const Header: React.FC<HeaderProps> = ({
+  userRole,
+  setUserRole,
+  onLogin,
+  onLogout,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const onLogout = () => {
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('token'); // 필요 시
-    setUserRole('guest'); // 상태 초기화
-    alert('로그아웃 되었습니다.');
+  const handleLogout = () => {
+    onLogout();
     navigate('/');
   };
 
@@ -65,9 +69,9 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 추가 */}
+                {/* 로그아웃 버튼 */}
                 <button
-                  onClick={onLogout}
+                  onClick={handleLogout}
                   className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
                 >
                   로그아웃
@@ -100,9 +104,9 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 추가 */}
+                {/* 로그아웃 버튼 */}
                 <button
-                  onClick={onLogout}
+                  onClick={handleLogout}
                   className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
                 >
                   로그아웃
@@ -110,10 +114,9 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
               </>
             )}
           </nav>
-
           {userRole === 'guest' && (
             <>
-              <LogInButton />
+              <LogInButton setUserRole={setUserRole} onLogin={onLogin} />
               <SignupButton />
             </>
           )}
@@ -162,9 +165,9 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 추가 */}
+                {/* 로그아웃 버튼 */}
                 <button
-                  onClick={onLogout}
+                  onClick={handleLogout}
                   className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
                 >
                   로그아웃
@@ -191,9 +194,9 @@ const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 추가 */}
+                {/* 로그아웃 버튼 */}
                 <button
-                  onClick={onLogout}
+                  onClick={handleLogout}
                   className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
                 >
                   로그아웃

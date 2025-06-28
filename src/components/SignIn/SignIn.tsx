@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import './SignIn.css'; // 이 파일은 제공되지 않았으므로 스타일 관련 문제는 발생할 수 있습니다.
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './SignIn.css';
 
 interface SignInProps {
   isOpen: boolean;
   close: () => void;
   onAdminLogin?: (email: string, password: string) => void;
   adminMode?: boolean;
-  // AppRouter에서 userRole 상태를 업데이트하기 위한 함수를 추가합니다.
   setUserRole?: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
+  onLogin?: (role: 'owner' | 'worker' | 'admin') => void; // 추가된 prop
 }
 
 export default function SignIn({
@@ -16,60 +16,66 @@ export default function SignIn({
   close,
   onAdminLogin,
   adminMode,
-  setUserRole, // 새로 추가된 prop
+  setUserRole,
+  onLogin, // 추가된 prop
 }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // 역할 상태 추가
   const [role, setRole] = useState<'owner' | 'worker' | 'admin'>('owner');
+  const navigate = useNavigate();
 
-  // 모달이 열릴 때마다 초기화 (선택 사항)
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       setEmail('');
       setPassword('');
-      setRole('owner'); // 기본 역할 설정
+      setRole('owner');
     }
   }, [isOpen]);
 
   const loginClickHandler = async () => {
-    // 폼 유효성 검사 (간단하게)
     if (!email || !password) {
       alert('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    // 관리자 모드일 경우 기존 onAdminLogin 호출
+    // 관리자 모드
     if (adminMode && onAdminLogin) {
-      onAdminLogin(email, password); // 이 함수는 AppRouter에서 전달받은 실제 백엔드 호출 로직을 가질 수 있습니다.
-      close(); // 관리자 로그인 처리 후 모달 닫기
+      onAdminLogin(email, password);
+      close();
       return;
     }
 
-    // --- 일반 사용자 로그인 (더미 데이터 사용) ---
     try {
-      // localStorage에서 회원 정보 가져오기
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-      // 이메일과 비밀번호가 일치하는 회원 찾기
       const foundUser = users.find(
         (user: any) => user.email === email && user.password === password,
       );
 
       if (foundUser) {
-        // 로그인 성공 처리
         const userRole = foundUser.role || 'owner';
         alert(`${userRole === 'owner' ? '집 소유주' : '복지사'} 로그인 성공!`);
 
-        // 로그인 상태 저장
-        localStorage.setItem('currentUser', JSON.stringify(foundUser));
+        // 로그인 성공 처리
+        if (onLogin) {
+          onLogin(userRole); // AppRouter의 handleLogin 호출
+        }
 
-        // 상태 업데이트
+        // 상태 업데이트 (선택적)
         if (setUserRole) {
           setUserRole(userRole);
         }
 
-        Navigate('/');
+        // 로그인 상태 저장
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
+
+        // 역할에 따라 분기해서 이동
+        if (userRole === 'owner') {
+          navigate('/owner/mypage');
+        } else if (userRole === 'worker') {
+          navigate('/worker/main');
+        } else {
+          navigate('/');
+        }
 
         close();
       } else {
@@ -122,8 +128,6 @@ export default function SignIn({
                   type="button"
                   className={`role-btn ${role === 'worker' ? 'active' : ''}`}
                   onClick={() => setRole('worker')}
-                  // 이메일이 worker@test.com 일 때만 복지사 선택 버튼 활성화 (선택 사항)
-                  // disabled={email !== 'worker@test.com' && email !== ''}
                 >
                   복지사
                 </button>
