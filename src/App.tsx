@@ -1,34 +1,54 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
 import Home from './pages/Home/Home';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
 import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
-import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
-import ReviewPage from './pages/ReviewPage/Review';
 import SignIn from './components/SignIn/SignIn';
 import AdminPage from './pages/AdminPage/AdminPage';
-import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
+
+// 복지사 메인 페이지 컴포넌트
+const WorkerMainPage: React.FC = () => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] text-[#364C84] text-3xl font-bold">
+      <p>환영합니다, 복지사님!</p>
+      <p className="mt-4 text-xl">복지사 메인 페이지입니다.</p>
+    </div>
+  );
+};
 
 const AppRouter: React.FC = () => {
-  // 실제로는 로그인 후 userRole을 받아와야 합니다.
+  // 로컬 스토리지에서 역할 읽기
   const storedRole = localStorage.getItem('userRole') as
     | 'owner'
     | 'worker'
     | 'guest'
     | 'admin'
     | null;
+
   const [userRole, setUserRole] = useState<
     'owner' | 'worker' | 'guest' | 'admin'
   >(storedRole ?? 'guest');
 
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);
 
+  // 로그인 핸들러
+  const handleLogin = (role: 'owner' | 'worker' | 'admin') => {
+    localStorage.setItem('userRole', role); // 로컬 스토리지 저장
+    setUserRole(role);
+  };
+
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUser');
+    setUserRole('guest');
+  };
+
+  // 관리자 로그인
   const handleAdminLogin = (email: string, password: string) => {
-    // 실제로는 백엔드에 role: 'M'으로 요청해야 함
     fetch('http://10.58.2.17:8000/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,7 +57,7 @@ const AppRouter: React.FC = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          localStorage.setItem('userRole', 'admin'); // 로컬 스토리지 저장
+          localStorage.setItem('userRole', 'admin');
           setUserRole('admin');
           setIsAdminSignInOpen(false);
           window.location.href = '/admin';
@@ -47,14 +67,19 @@ const AppRouter: React.FC = () => {
       });
   };
 
-  // userRole이 admin일 때만 admin 전달, 아니면 guest로 다운캐스팅
   const headerRole = userRole === 'admin' ? 'guest' : userRole;
   const homeRole = userRole === 'admin' ? 'guest' : userRole;
 
   return (
     <Router>
       <div className="min-h-screen bg-[#FFFDF5]">
-        <Header userRole={headerRole} setUserRole={setUserRole} />
+        {/* Header에 핸들러 전달 */}
+        <Header
+          userRole={headerRole}
+          setUserRole={setUserRole}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+        />
 
         <button
           onClick={() => setIsAdminSignInOpen(true)}
@@ -78,12 +103,15 @@ const AppRouter: React.FC = () => {
         >
           관리자 로그인
         </button>
+
         <SignIn
           isOpen={isAdminSignInOpen}
           close={() => setIsAdminSignInOpen(false)}
           onAdminLogin={handleAdminLogin}
           adminMode
+          onLogin={handleLogin} // 일반 로그인 핸들러 추가
         />
+
         <Routes>
           <Route path="/" element={<Home userRole={homeRole} />} />
           <Route path="/signup" element={<SignUpPage />} />
@@ -91,9 +119,7 @@ const AppRouter: React.FC = () => {
           <Route path="/owner/mypage" element={<MyPage />} />
           <Route path="/owner/watinglist" element={<MyPage />} />
           <Route path="/owner/matchedlist" element={<MyPage />} />
-          <Route path="/request" element={<MatchRequestPage />} />
-          <Route path="/review" element={<ReviewPage />} />
-          <Route path="/complete" element={<MatchCompletePage />} />
+          <Route path="/worker/main" element={<WorkerMainPage />} />
           <Route
             path="/admin"
             element={
@@ -111,8 +137,4 @@ const AppRouter: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
-  return <AppRouter />;
-};
-
-export default App;
+export default AppRouter;

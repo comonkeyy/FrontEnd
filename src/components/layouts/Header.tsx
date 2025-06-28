@@ -21,8 +21,10 @@ const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    onLogout();
-    navigate('/');
+    if (window.confirm('로그아웃하시겠습니까?')) {
+      onLogout(); // 실제 로그아웃 로직 실행
+      navigate('/'); // 홈으로 이동
+    }
   };
 
   return (
@@ -69,7 +71,6 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 */}
                 <button
                   onClick={handleLogout}
                   className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
@@ -104,7 +105,6 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 */}
                 <button
                   onClick={handleLogout}
                   className="ml-2 bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors whitespace-nowrap"
@@ -114,6 +114,7 @@ const Header: React.FC<HeaderProps> = ({
               </>
             )}
           </nav>
+
           {userRole === 'guest' && (
             <>
               <LogInButton setUserRole={setUserRole} onLogin={onLogin} />
@@ -165,7 +166,6 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 */}
                 <button
                   onClick={handleLogout}
                   className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"
@@ -194,7 +194,6 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   마이페이지
                 </Link>
-                {/* 로그아웃 버튼 */}
                 <button
                   onClick={handleLogout}
                   className="bg-[#E7F1A8] hover:bg-[#95B1EE] text-[#364C84] px-4 py-2 rounded-button font-bold transition-colors text-center"

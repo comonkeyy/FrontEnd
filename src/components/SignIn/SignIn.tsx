@@ -8,7 +8,7 @@ interface SignInProps {
   onAdminLogin?: (email: string, password: string) => void;
   adminMode?: boolean;
   setUserRole?: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
-  onLogin?: (role: 'owner' | 'worker' | 'admin') => void; // 추가된 prop
+  onLogin?: (role: 'owner' | 'worker' | 'admin') => void;
 }
 
 export default function SignIn({
@@ -17,7 +17,7 @@ export default function SignIn({
   onAdminLogin,
   adminMode,
   setUserRole,
-  onLogin, // 추가된 prop
+  onLogin,
 }: SignInProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,12 +57,7 @@ export default function SignIn({
 
         // 로그인 성공 처리
         if (onLogin) {
-          onLogin(userRole); // AppRouter의 handleLogin 호출
-        }
-
-        // 상태 업데이트 (선택적)
-        if (setUserRole) {
-          setUserRole(userRole);
+          onLogin(userRole);
         }
 
         // 로그인 상태 저장
