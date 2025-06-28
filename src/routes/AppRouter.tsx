@@ -15,6 +15,7 @@ import MyPage from '@/pages/owner/MyPage';
 import HouseRegisterForm from '@/pages/HouseRegisterForm';
 import SignIn from '@/components/SignIn/SignIn'; // SignIn 컴포넌트 경로 확인
 import AdminPage from '@/pages/AdminPage/AdminPage';
+import WorkerRequestPage from '@/pages/WorkerRequestPage/WorkerRequestPage'; // 새로 만든 페이지 임포트
 
 // 복지사 메인 페이지 컴포넌트 (더미, 실제 구현 필요)
 const WorkerMainPage: React.FC = () => {
@@ -188,31 +189,37 @@ const AppRouter: React.FC = () => {
         />
 
         <Routes>
+          {/* --- 공용 라우트 --- */}
           <Route path="/" element={<Home userRole={homeRole} />} />
-          <Route
-            path="/signup"
-            element={<SignUpPage onLogin={handleLogin} />}
-          />
-          <Route path="/register-property" element={<HouseRegisterForm />} />
-          <Route path="/" element={<MyPage />} />
-          <Route path="/owner/waitinglist" element={<MyPage />} />
-          <Route path="/owner/matchedlist" element={<MyPage />} />
-          <Route path="/" element={<WorkerMainPage />} />
-          <Route
-            path="/admin"
-            element={
-              userRole === 'admin' ? (
-                <AdminPage />
-              ) : (
-                <Home userRole={homeRole} /> // 관리자가 아니면 Home으로 리디렉션
-              )
-            }
-          />
-          {/* 기타 라우트들 */}
-          <Route path="/worker/mypage" element={<WorkerMainPage />} />
-          <Route path="/request" element={<WorkerMainPage />} />
-          <Route path="/complete" element={<WorkerMainPage />} />
-          <Route path="/review" element={<WorkerMainPage />} />
+          <Route path="/signup" element={<SignUpPage onLogin={handleLogin} />} />
+
+          {/* --- 빈집 소유자(owner) 전용 라우트 --- */}
+          {userRole === 'owner' && (
+            <>
+              <Route path="/owner/mypage" element={<MyPage />} />
+              <Route path="/owner/waitinglist" element={<MyPage />} />
+              <Route path="/owner/matchedlist" element={<MyPage />} />
+              <Route path="/register-property" element={<HouseRegisterForm />} />
+            </>
+          )}
+
+          {/* --- 복지사(worker) 전용 라우트 --- */}
+          {userRole === 'CW' && ( // 'worker' 대신 'CW'를 사용해야 할 수 있습니다. SignIn 로직 확인 필요
+            <>
+              <Route path="/worker/mypage" element={<WorkerMainPage />} />
+              <Route path="/request" element={<WorkerRequestPage />} />
+              <Route path="/complete" element={<WorkerMainPage />} />
+              <Route path="/review" element={<WorkerMainPage />} />
+            </>
+          )}
+
+          {/* --- 관리자(admin) 전용 라우트 --- */}
+          {userRole === 'admin' && (
+            <Route path="/admin" element={<AdminPage />} />
+          )}
+          
+          {/* 일치하는 라우트가 없을 경우 홈으로 리디렉션 */}
+          <Route path="*" element={<Home userRole={homeRole} />} />
         </Routes>
         <Footer />
       </div>
