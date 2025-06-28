@@ -1,37 +1,42 @@
-import React from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createHouse } from '@/api/house';
+import type { VacantHouseData } from '@/@types/vacantHouse';
 import './MatchRequestPage.css';
 
-type HouseInfo = {
-  size: string; // area -> size
-  roomCount: string;
-  yearBuilt: string;
-  moveInDate: string;
-  houseType: string; // 'apartment' | 'house'
-};
-
-const MatchRequestPage: React.FC = () => {
-  const [houseInfo, setHouseInfo] = React.useState<HouseInfo>({
-    size: '', // area -> size
-    roomCount: '',
-    yearBuilt: '',
-    moveInDate: '',
-    houseType: '',
+const RegisterPropertyPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<Partial<VacantHouseData>>({
+    address: '',
+    detailAddress: '',
+    region: '',
+    size: '',
+    floor: '',
+    description: '',
+    images: [],
   });
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setHouseInfo({
-      ...houseInfo,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('입력된 집 정보:', houseInfo);
+    if (!formData.address || !formData.size || !formData.floor) {
+      alert('주소, 평수, 층수는 필수 입력 항목입니다.');
+      return;
+    }
+    try {
+      const response = await createHouse(formData);
+      alert(`빈집 등록 성공! (ID: ${response.houseId})`);
+      navigate('/owner/mypage'); // 등록 후 마이페이지로 이동
+    } catch (error) {
+      console.error('빈집 등록 실패:', error);
+      alert('빈집 등록에 실패했습니다.');
+    }
   };
 
   return (
@@ -41,72 +46,87 @@ const MatchRequestPage: React.FC = () => {
         <div className="card">
           <div className="info-group">
             <div className="info-row">
-              <span className="info-label">평수</span>
+              <span className="info-label">주소 (필수)</span>
               <input
-                className="info-input"
-                name="size" // area -> size
-                value={houseInfo.size} // houseInfo.area -> houseInfo.size
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
-                placeholder="평수 입력"
+                className="w-full p-2 border rounded"
+                required
               />
             </div>
             <div className="info-row">
-              <span className="info-label">방 수</span>
+              <span className="info-label">상세주소</span>
               <input
-                className="info-input"
-                name="roomCount"
-                value={houseInfo.roomCount}
+                type="text"
+                id="detailAddress"
+                name="detailAddress"
+                value={formData.detailAddress}
                 onChange={handleChange}
-                placeholder="방 수 입력"
+                className="w-full p-2 border rounded"
               />
             </div>
             <div className="info-row">
-              <span className="info-label">건축 연도</span>
-              <select
-                className="info-select"
-                name="yearBuilt"
-                value={houseInfo.yearBuilt}
-                onChange={handleChange}
-              >
-                <option value="">연도 선택</option>
-                {Array.from({ length: 30 }, (_, i) => 2025 - i).map((year) => (
-                  <option key={year} value={year}>
-                    {year}년
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="info-row">
-              <span className="info-label">입주 가능 시기</span>
+              <span className="info-label">지역</span>
               <input
-                className="info-input"
-                name="moveInDate"
-                type="date"
-                value={houseInfo.moveInDate}
+                type="text"
+                id="region"
+                name="region"
+                value={formData.region}
                 onChange={handleChange}
+                className="w-full p-2 border rounded"
               />
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="info-row">
+                <span className="info-label">평수 (필수)</span>
+                <input
+                  type="text"
+                  id="size"
+                  name="size"
+                  value={formData.size}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="info-row">
+                <span className="info-label">층수 (필수)</span>
+                <input
+                  type="text"
+                  id="floor"
+                  name="floor"
+                  value={formData.floor}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+            </div>
             <div className="info-row">
-              <span className="info-label">주거 형태</span>
-              <select
-                className="info-select"
-                name="houseType"
-                value={houseInfo.houseType}
+              <span className="info-label">상세설명</span>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
-              >
-                <option value="">선택</option>
-                <option value="apartment">아파트</option>
-                <option value="house">주택</option>
-              </select>
+                rows={4}
+                className="w-full p-2 border rounded"
+              />
             </div>
           </div>
         </div>
-        <button className="submit-button" type="submit">
-          정보 저장
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+        >
+          등록하기
         </button>
       </form>
     </div>
   );
 };
 
-export default MatchRequestPage;
+export default RegisterPropertyPage;

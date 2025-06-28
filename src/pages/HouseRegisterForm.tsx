@@ -1,9 +1,20 @@
 import VacantHouseForm from '@/features/auth/vacant-house/VacantHouseForm';
+import { registerHouse } from '@/api/house'; // 1. registerHouse 함수 import
+import { useNavigate } from 'react-router-dom'; // 2. useNavigate import
 
 const RegisterPage = () => {
-  const handleRegisterSubmit = (data: any) => {
-    // 등록 API 호출 또는 상태 업데이트
-    alert('빈집이 등록되었습니다!');
+  const navigate = useNavigate();
+
+  const handleRegisterSubmit = async (data: any) => {
+    try {
+      // API를 통해 서버에 빈집 정보 전송
+      const response = await registerHouse(data);
+      console.log('등록 성공:', response);
+      alert('빈집이 성공적으로 등록되었습니다!');
+      navigate('/owner/mypage'); // 등록 후 마이페이지로 이동
+    } catch (error) {
+      alert('빈집 등록에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (

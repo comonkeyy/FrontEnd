@@ -6,6 +6,22 @@ import VacantHouseForm from '@/features/auth/vacant-house/VacantHouseForm';
 import type { VacantHouseData } from '@/types/vacantHouse';
 import { deleteHouse, updateHouse } from '@/api/house';
 import { getMyHouses } from '@/api/house';
+import { Link } from 'react-router-dom';
+
+// 데이터 타입 정의 (API 응답에 맞춰)
+interface User {
+  name: string;
+  email: string;
+}
+
+interface House {
+  id: number;
+  address: string;
+  region: string;
+  size: string;
+  floor: string;
+  status: string;
+}
 
 const MyPage: React.FC = () => {
   const location = useLocation();
