@@ -17,7 +17,7 @@ const AppRouter: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
   const [userRole, setUserRole] = useState<
     'owner' | 'worker' | 'guest' | 'admin'
-  >('worker');
+  >('owner');
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);
 
   const handleAdminLogin = (email: string, password: string) => {
