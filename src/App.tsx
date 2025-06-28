@@ -51,21 +51,24 @@ const AppRouter: React.FC = () => {
   };
 
   // 관리자 로그인
-  const handleAdminLogin = (user_id: string, password: string) => {
-    fetch('http://10.58.2.17:8000/auth/login', {
+  // 관리자 로그인 핸들러
+  const handleAdminLogin = (user_id, password) => {
+    fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id, password, role: 'M' }),
+      body: JSON.stringify({ user_id, password }),
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
           localStorage.setItem('userRole', 'admin');
+          localStorage.setItem('adminToken', res.accessToken);
+          localStorage.setItem('adminInfo', JSON.stringify(res.admin));
           setUserRole('admin');
           setIsAdminSignInOpen(false);
           window.location.href = '/admin';
         } else {
-          alert('관리자 로그인 실패');
+          alert('관리자 로그인 실패: ' + (res.message || '정보를 확인하세요.'));
         }
       });
   };
