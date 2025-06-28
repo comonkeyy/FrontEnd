@@ -1,12 +1,11 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import GeminiVoiceChatButton from '@/components/GeminiVoiceChatButton';
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import VacantHouseForm from '@/features/auth/vacant-house/VacantHouseForm';
 import type { VacantHouseData } from '@/types/vacantHouse';
 import { deleteHouse, updateHouse } from '@/api/house';
-import { getMyHouses } from '@/api/house';
-import { Link } from 'react-router-dom';
+import { getMyHouses } from '@/api/house'; // getMyHouses를 사용합니다.
 
 // 데이터 타입 정의 (API 응답에 맞춰)
 interface User {
@@ -20,41 +19,41 @@ interface House {
   region: string;
   size: string;
   floor: string;
-  status: string;
+  status: string; // 'available', 'matched' 등의 값을 가집니다.
 }
 
 const MyPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // navigate 훅 사용
   const [activeTab, setActiveTab] = useState<'waiting' | 'completed'>(
     'waiting',
   );
+  const [houses, setHouses] = useState<House[]>([]); // 타입을 House[]로 변경
 
   useEffect(() => {
-    getMyHouses()
-      .then((res) => {
-        console.log('빈집 목록 응답:', res);
-        setHouses(res.data);
-      })
-      .catch((err) => {
+    const fetchMyHouses = async () => {
+      try {
+        const response = await getMyHouses();
+        // API 응답이 배열 형태이므로 그대로 상태에 저장합니다.
+        setHouses(response);
+      } catch (err) {
         console.error('빈집 목록 조회 실패:', err);
-        alert('빈집 목록 조회 실패');
-      });
-  }, []); // 의존성 배열 추가
+        alert('빈집 목록 조회에 실패했습니다.');
+      }
+    };
+    fetchMyHouses();
+  }, []);
 
-  // 탭 변경 시 URL 업데이트
+  // 탭 변경 핸들러는 유지합니다.
   const handleTabChange = (tab: 'waiting' | 'completed') => {
     setActiveTab(tab);
+    // URL 변경 로직은 필요하다면 유지하고, 아니라면 이 줄을 삭제해도 됩니다.
     navigate(tab === 'waiting' ? '/owner/waitinglist' : '/owner/matchedlist');
   };
-  const [houses, setHouses] = useState<VacantHouseData[]>([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedHouseId, setSelectedHouseId] = useState<string | null>(null);
-  const [editingHouse, setEditingHouse] = useState<VacantHouseData | null>(
-    null,
-  );
+  const [editingHouse, setEditingHouse] = useState<House | null>(null); // 타입 House로 변경
 
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,8 +65,8 @@ const MyPage: React.FC = () => {
   const confirmDelete = async () => {
     if (selectedHouseId) {
       try {
-        await deleteHouse(selectedHouseId); // 서버에 삭제 요청
-        setHouses(houses.filter((house) => house.id !== selectedHouseId)); // 상태 갱신
+        await deleteHouse(String(selectedHouseId)); // id를 string으로 변환
+        setHouses(houses.filter((house) => house.id !== selectedHouseId));
         setShowDeleteModal(false);
         setSelectedHouseId(null);
       } catch (e) {
@@ -76,12 +75,22 @@ const MyPage: React.FC = () => {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'available':
+        return '매칭대기';
+      case 'matched':
+        return '매칭완료';
+      default:
+        return status;
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case '매칭대기':
+      case 'available': // '매칭대기'를 'available'로 변경
         return 'bg-yellow-100 text-yellow-800';
-
-      case '매칭완료':
+      case 'matched': // '매칭완료'를 'matched'로 변경
         return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -129,10 +138,11 @@ const MyPage: React.FC = () => {
         {/* 빈집 목록 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {houses
-            .filter((house) =>
-              activeTab === 'waiting'
-                ? house.status === '매칭대기'
-                : house.status === '매칭완료',
+            .filter(
+              (house) =>
+                activeTab === 'waiting'
+                  ? house.status === 'available' // '매칭대기'를 'available'로 변경
+                  : house.status === 'matched', // '매칭완료'를 'matched'로 변경
             )
             .map((house) => (
               <div
@@ -152,23 +162,22 @@ const MyPage: React.FC = () => {
                   <span
                     className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(house.status)}`}
                   >
-                    {house.status}
+                    {getStatusText(house.status)}
                   </span>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-[#364C84] mb-2">
-                    {house.name}
+                    {house.address} {/* name 대신 address를 표시 */}
                   </h3>
-                  <p className="text-gray-600 mb-4">{house.address}</p>
+                  <p className="text-gray-600 mb-4">{house.region}</p>{' '}
+                  {/* address 대신 region 표시 */}
                   <div className="mb-4">
                     <p className="text-sm text-gray-500">
-                      등록일: {house.registeredDate}
+                      {/* registeredDate 대신 다른 정보 표시 또는 삭제 */}
+                      층수: {house.floor}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      면적: {house.size}㎡
-                    </p>
+                    <p className="text-sm text-gray-500">면적: {house.size}</p>
                   </div>
-
                   <div className="flex justify-between items-center">
                     {activeTab === 'waiting' ? (
                       <>
@@ -183,7 +192,7 @@ const MyPage: React.FC = () => {
                           수정하기
                         </button>
                         <button
-                          onClick={() => handleDeleteHouse(house.id)}
+                          onClick={() => handleDeleteHouse(house.id)} // house.id가 number이므로 그대로 전달
                           className="text-red-600 hover:text-red-700 font-medium flex items-center cursor-pointer whitespace-nowrap"
                         >
                           <i className="fas fa-trash-alt mr-2"></i>
@@ -253,7 +262,7 @@ const MyPage: React.FC = () => {
               onSubmit={async (data) => {
                 try {
                   if (!editingHouse?.id) return;
-                  await updateHouse(editingHouse.id, data);
+                  await updateHouse(String(editingHouse.id), data); // id를 string으로 변환
                   setHouses((prevHouses) =>
                     prevHouses.map((house) =>
                       house.id === editingHouse.id

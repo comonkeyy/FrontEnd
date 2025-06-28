@@ -4,7 +4,7 @@ import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
 import Home from './pages/Home/Home';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
-import MyPage from './pages/owner/MyPage';
+import MyPage from './features/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
 import SignIn from './components/SignIn/SignIn';
 import AdminPage from './pages/AdminPage/AdminPage';

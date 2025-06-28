@@ -8,19 +8,24 @@ const MyPage = () => {
     phone: '',
     email: '',
   });
-  const [houses, setHouses] = useState([]);
+  const [houses, setHouses] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchMyHouses = async () => {
       try {
-        const res = await getOwnerHome();
-        setUserInfo(res.data.user);
-        setHouses(res.data.houses);
-      } catch {
-        alert('정보 조회 실패');
+        const response = await getOwnerHome();
+        // API 응답 객체에서 'houses' 배열을 추출하여 상태에 저장합니다.
+        if (response.success) {
+          // API 응답에서 사용자 정보와 집 목록을 각각 상태에 저장합니다.
+          setUserInfo(response.user);
+          setHouses(response.houses || []); // houses가 없으면 빈 배열로 설정
+        }
+      } catch (err) {
+        console.error('마이페이지 데이터 조회 실패:', err);
+        alert('데이터 조회에 실패했습니다.');
       }
     };
-    fetchData();
+    fetchMyHouses();
   }, []);
 
   return (
@@ -52,7 +57,7 @@ const MyPage = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-[#364C84]">내 빈집 목록</h2>
           </div>
-          <HouseList />
+          <HouseList houses={houses} />
         </div>
       </div>
     </div>
