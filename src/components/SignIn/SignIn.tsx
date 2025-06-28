@@ -21,7 +21,7 @@ export default function SignIn({
 }: SignInProps) {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'owner' | 'worker' | 'admin'>('owner');
+  const [role, setRole] = useState<'owner' | 'CW' | 'admin'>('owner');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function SignIn({
         body: JSON.stringify({
           user_id: userId, // ← email이 아니라 user_id로 key를 맞춰야 함
           password,
-          ...(role === 'worker' ? { role: 'CW' } : {}),
+          ...(role === 'CW' ? { role: 'CW' } : { role: 'owner' }),
         }),
       });
 
@@ -76,7 +76,7 @@ export default function SignIn({
         localStorage.setItem('currentUser', JSON.stringify(result.user));
 
         // 5. 역할 처리
-        const userRole = result.user.role === 'CW' ? 'worker' : 'owner';
+        const userRole = result.user.role === 'CW' ? 'CW' : 'owner';
 
         if (onLogin) onLogin(userRole);
         if (setUserRole) setUserRole(userRole);
@@ -85,7 +85,7 @@ export default function SignIn({
 
         // 6. 페이지 이동
         if (userRole === 'owner') navigate('/owner/mypage');
-        else if (userRole === 'worker') navigate('/worker/main');
+        else if (userRole === 'CW') navigate('/worker/main');
         else navigate('/');
 
         close();
@@ -145,8 +145,8 @@ export default function SignIn({
                   </button>
                   <button
                     type="button"
-                    className={`role-btn ${role === 'worker' ? 'active' : ''}`}
-                    onClick={() => setRole('worker')}
+                    className={`role-btn ${role === 'CW' ? 'active' : ''}`}
+                    onClick={() => setRole('CW')}
                   >
                     복지사
                   </button>

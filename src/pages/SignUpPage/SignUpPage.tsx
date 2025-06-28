@@ -94,7 +94,7 @@ export default function SignUpPage() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [userid, setUserid] = useState('');
+  const [user_id, setUserid] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [email, setEmail] = useState('');
@@ -106,57 +106,45 @@ export default function SignUpPage() {
     !!role &&
     !!name &&
     !!phone &&
-    !!userid &&
+    !!user_id &&
     !!password &&
     !!password2 &&
     !!email &&
     (role === 'owner' ? !!address : true) &&
     !passwordError;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid) return;
     if (!window.confirm('정말로 가입하겠습니까?')) return;
 
-    // --- localStorage에 회원 정보 저장 ---
     try {
-      // 기존 users 배열 불러오기 (없으면 빈 배열)
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-      // 새 회원 객체 생성
-      const newUser = {
-        name,
-        phone,
-        userid,
-        password,
-        email,
-        role,
-        address: role === 'owner' ? address : '', // 소유주만 주소 저장
-      };
-
-      // 중복 아이디 체크 (userid)
-      const isDuplicate = users.some((user: any) => user.userid === userid);
-      if (isDuplicate) {
-        alert('이미 존재하는 아이디입니다.');
-        return;
-      }
-
-      // users 배열에 새 회원 추가
-      users.push(newUser);
-
-      // localStorage에 저장
-      localStorage.setItem('users', JSON.stringify(users));
-
-      // --- 회원가입 성공 알림 및 페이지 이동 ---
-      alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
-      localStorage.setItem('userRole', role); // 역할 저장 (선택)
-      if (role === 'owner') {
-        window.location.href = '/owner/mypage';
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          user_id,
+          password,
+          email,
+          role: role === 'worker' ? 'CW' : 'owner', // 반드시 이렇게 변환!
+          address: role === 'owner' ? address : '',
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
+        // 필요하면 로그인 처리 및 페이지 이동
+        if (role === 'owner') {
+          window.location.href = '/owner/mypage';
+        } else {
+          window.location.href = '/worker/main';
+        }
       } else {
-        window.location.href = '/worker/main';
+        alert(result.message || '회원가입 실패');
       }
     } catch (error) {
-      console.error('회원가입 처리 오류:', error);
       alert('회원가입 처리 중 오류가 발생했습니다.');
     }
   };
@@ -255,7 +243,7 @@ export default function SignUpPage() {
                 id="userid"
                 type="text"
                 placeholder="아이디"
-                value={userid}
+                value={user_id}
                 onChange={(e) => setUserid(e.target.value)}
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
