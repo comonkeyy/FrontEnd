@@ -12,10 +12,12 @@ const axiosInstance = axios.create({
 // 요청 인터셉터 (예: 인증 토큰 추가)
 axiosInstance.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem('accessToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // 로컬 스토리지에서 토큰을 가져옵니다. 'accessToken'은 실제 사용하는 키 이름으로 변경해야 합니다.
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      // 토큰이 있으면 Authorization 헤더에 추가합니다.
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

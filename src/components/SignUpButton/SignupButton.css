@@ -1,14 +1,17 @@
 .signup-btn {
-  background: var(--color-white);
-  color: var(--color-deep-green);
-  border: 1.5px solid var(--color-deep-green);
-  border-radius: 4px;
-  padding: 10px 20px;
+  background: #fffdf5; /* 배경(Background) 색상 */
+  color: #364c84; /* 주요 텍스트 색상 */
+  border: 1.5px solid #364c84; /* 헤더(Primary) 색상 사용 */
+  padding: 0.5rem 1rem;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
+
 .signup-btn:hover {
-  background: #bcbcbc4c;
+  background: #e7f1a8; /* 강조 카드 배경 색상 (호버) */
+  color: #364c84; /* 텍스트 색상 유지 */
 }
