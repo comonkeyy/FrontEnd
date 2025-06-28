@@ -84,8 +84,8 @@ export default function SignIn({
         alert(`${userRole === 'owner' ? '집 소유주' : '복지사'} 로그인 성공!`);
 
         // 6. 페이지 이동
-        if (userRole === 'owner') navigate('/owner/mypage');
-        else if (userRole === 'CW') navigate('/worker/main');
+        if (userRole === 'owner') navigate('/');
+        else if (userRole === 'CW') navigate('/');
         else navigate('/');
 
         close();

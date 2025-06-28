@@ -69,9 +69,9 @@ const AppRouter: React.FC = () => {
     setUserRole(normalizedRole); // 변환된 역할로 상태 업데이트
 
     if (normalizedRole === 'owner') {
-      navigate('/owner/mypage');
+      navigate('/');
     } else if (normalizedRole === 'worker') {
-      navigate('/worker/main');
+      navigate('/'); // '/worker/main'에서 '/'로 변경
     } else {
       navigate('/');
     }
@@ -189,12 +189,15 @@ const AppRouter: React.FC = () => {
 
         <Routes>
           <Route path="/" element={<Home userRole={homeRole} />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/signup"
+            element={<SignUpPage onLogin={handleLogin} />}
+          />
           <Route path="/register-property" element={<HouseRegisterForm />} />
-          <Route path="/owner/mypage" element={<MyPage />} />
+          <Route path="/" element={<MyPage />} />
           <Route path="/owner/waitinglist" element={<MyPage />} />
           <Route path="/owner/matchedlist" element={<MyPage />} />
-          <Route path="/worker/main" element={<WorkerMainPage />} />
+          <Route path="/" element={<WorkerMainPage />} />
           <Route
             path="/admin"
             element={
