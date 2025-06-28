@@ -10,20 +10,13 @@ import SignIn from './components/SignIn/SignIn';
 import AdminPage from './pages/AdminPage/AdminPage';
 import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
 import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
-import WorkerReview from './pages/WorkerReviewPage/WorkerReview';
+import Review from './pages/ReviewPage/Review';
+
+// 필요한 경우 WorkerMainPage 등 추가 import
 
 // 복지사 메인 페이지 컴포넌트
-const WorkerMainPage: React.FC = () => {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] text-[#364C84] text-3xl font-bold">
-      <p>환영합니다, 복지사님!</p>
-      <p className="mt-4 text-xl">복지사 메인 페이지입니다.</p>
-    </div>
-  );
-};
-
 const AppRouter: React.FC = () => {
-  // 로컬 스토리지에서 역할 읽기
+  // 역할 관리
   const storedRole = localStorage.getItem('userRole') as
     | 'owner'
     | 'CW'
@@ -31,14 +24,13 @@ const AppRouter: React.FC = () => {
     | 'admin'
     | null;
 
-  const [userRole, setUserRole] = useState<
-    'owner' | 'CW' | 'guest' | 'admin'
-  >(storedRole ?? 'guest');
-
+  const [userRole, setUserRole] = useState<'owner' | 'CW' | 'guest' | 'admin'>(
+    storedRole ?? 'guest',
+  );
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);
 
   // 로그인 핸들러
-  const handleLogin = (role: 'owner' | 'worker' | 'admin') => {
+  const handleLogin = (role: 'owner' | 'CW' | 'admin') => {
     localStorage.setItem('userRole', role); // 로컬 스토리지 저장
     setUserRole(role);
   };
@@ -50,9 +42,8 @@ const AppRouter: React.FC = () => {
     setUserRole('guest');
   };
 
-  // 관리자 로그인
   // 관리자 로그인 핸들러
-  const handleAdminLogin = (user_id, password) => {
+  const handleAdminLogin = (user_id: string, password: string) => {
     fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,20 +64,21 @@ const AppRouter: React.FC = () => {
       });
   };
 
+  // 역할에 따라 헤더/홈에 전달할 값
   const headerRole = userRole === 'admin' ? 'guest' : userRole;
   const homeRole = userRole === 'admin' ? 'guest' : userRole;
 
   return (
     <Router>
-      <div className="min-h-screen bg-[#FFFDF5]">
-        {/* Header에 핸들러 전달 */}
+      <div className="min-h-screen bg-[#FFFDF5] flex flex-col">
+        {/* 헤더 */}
         <Header
           userRole={headerRole}
           setUserRole={setUserRole}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
-        {/* 게스트일 때만 관리자 로그인 버튼 노출 */}
+        {/* 관리자 로그인 버튼 (게스트만 노출) */}
         {userRole === 'guest' && (
           <button
             onClick={() => setIsAdminSignInOpen(true)}
@@ -111,36 +103,44 @@ const AppRouter: React.FC = () => {
             관리자 로그인
           </button>
         )}
+        {/* 로그인/회원가입 모달 */}
         <SignIn
           isOpen={isAdminSignInOpen}
           close={() => setIsAdminSignInOpen(false)}
           onAdminLogin={handleAdminLogin}
           adminMode
-          onLogin={handleLogin} // 일반 로그인 핸들러 추가
+          onLogin={handleLogin}
         />
 
-        <Routes>
-          <Route path="/" element={<Home userRole={homeRole} />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/register-property" element={<HouseRegisterForm />} />
-          <Route path="/owner/mypage" element={<MyPage />} />
-          <Route path="/owner/waitinglist" element={<MyPage />} />
-          <Route path="/owner/matchedlist" element={<MyPage />} />
-          <Route path="/worker/main" element={<WorkerMainPage />} />
-          <Route path="/request" element={<MatchRequestPage />} />
-          <Route path="/complete" element={<MatchCompletePage />} />
-          <Route path="/review" element={<WorkerReview />} />
-          <Route
-            path="/admin"
-            element={
-              userRole === 'admin' ? (
-                <AdminPage />
-              ) : (
-                <Home userRole={homeRole} />
-              )
-            }
-          />
-        </Routes>
+        {/* 라우팅 */}
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home userRole={homeRole} />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/register-property" element={<HouseRegisterForm />} />
+            <Route path="/owner/mypage" element={<MyPage />} />
+            <Route path="/owner/waitinglist" element={<MyPage />} />
+            <Route path="/owner/matchedlist" element={<MyPage />} />
+            {/* WorkerMainPage가 필요하다면 import 후 아래 라우트 추가 */}
+            {/* <Route path="/worker/main" element={<WorkerMainPage />} /> */}
+            <Route path="/request" element={<MatchRequestPage />} />
+            <Route path="/complete" element={<MatchCompletePage />} />
+            <Route path="/review" element={<Review />} />
+            <Route
+              path="/admin"
+              element={
+                userRole === 'admin' ? (
+                  <AdminPage />
+                ) : (
+                  <Home userRole={homeRole} />
+                )
+              }
+            />
+            {/* 404 Not Found 처리 */}
+            <Route path="*" element={<Home userRole={homeRole} />} />
+          </Routes>
+        </div>
+        {/* 푸터 */}
         <Footer />
       </div>
     </Router>
