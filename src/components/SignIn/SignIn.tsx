@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import './SignIn.css'; // 이 파일은 제공되지 않았으므로 스타일 관련 문제는 발생할 수 있습니다.
 
 interface SignInProps {
@@ -48,56 +48,37 @@ export default function SignIn({
 
     // --- 일반 사용자 로그인 (더미 데이터 사용) ---
     try {
-      // 실제 백엔드 호출 대신 1-2초 지연을 시뮬레이션합니다.
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 1000 + 1000),
-      ); // 1초에서 2초 사이
+      // localStorage에서 회원 정보 가져오기
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-      // 더미 응답 객체 정의
-      let mockResponse = {
-        success: false,
-        message: '더미 데이터: 아이디 또는 비밀번호가 올바르지 않습니다.',
-      };
+      // 이메일과 비밀번호가 일치하는 회원 찾기
+      const foundUser = users.find(
+        (user: any) => user.email === email && user.password === password,
+      );
 
-      // 이메일과 역할에 따라 성공/실패 시나리오를 정의합니다.
-      // 실제 백엔드라면 여기서 데이터베이스 조회 및 비밀번호 비교를 수행합니다.
-      if (email === 'owner@test.com' && password === 'test1234') {
-        mockResponse = { success: true, message: '집 소유자 로그인 성공!' };
-        setRole('owner'); // 더미 로그인 성공 시 역할 설정 (혹시 다르게 입력했을 경우를 대비)
-      } else if (email === 'worker@test.com' && password === 'test1234') {
-        mockResponse = { success: true, message: '복지사 로그인 성공!' };
-        setRole('worker'); // 더미 로그인 성공 시 역할 설정
-      }
-      // 실패 시나리오는 위에서 설정된 기본 mockResponse를 사용합니다.
+      if (foundUser) {
+        // 로그인 성공 처리
+        const userRole = foundUser.role || 'owner';
+        alert(`${userRole === 'owner' ? '집 소유주' : '복지사'} 로그인 성공!`);
 
-      if (mockResponse.success) {
-        alert(mockResponse.message);
+        // 로그인 상태 저장
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
 
-        // 로그인 성공 시 역할 정보를 로컬 스토리지에 저장
-        localStorage.setItem('userRole', role);
-
-        // AppRouter의 userRole 상태를 업데이트
+        // 상태 업데이트
         if (setUserRole) {
-          setUserRole(role);
+          setUserRole(userRole);
         }
 
-        // 역할에 따라 페이지 리디렉션
-        if (role === 'owner') {
-          window.location.href = '/owner/mypage'; // 집 소유자 메인 페이지
-        } else if (role === 'worker') {
-          window.location.href = '/worker/main'; // 복지사 메인 페이지 (AppRouter에 라우트가 있어야 함)
-        } else {
-          window.location.href = '/'; // 기본 홈페이지 (예외 처리)
-        }
-        close(); // 모달 닫기
+        Navigate('/');
+
+        close();
       } else {
-        alert(mockResponse.message);
+        alert('이메일 또는 비밀번호가 올바르지 않습니다.');
       }
     } catch (error) {
-      console.error('더미 로그인 처리 중 오류:', error);
+      console.error('로그인 처리 중 오류:', error);
       alert('로그인 중 알 수 없는 오류가 발생했습니다.');
     }
-    // --- 더미 데이터 사용 부분 끝 ---
   };
 
   if (!isOpen) return null;
