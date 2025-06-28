@@ -6,17 +6,19 @@ import SignupButton from '../SignUpButton/SignUpButton';
 
 type HeaderProps = {
   userRole: 'owner' | 'worker' | 'guest';
+  setUserRole: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
 };
 
-const Header: React.FC<HeaderProps> = ({ userRole }) => {
+const Header: React.FC<HeaderProps> = ({ userRole, setUserRole }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // 실제 로그아웃 로직으로 교체하세요
   const onLogout = () => {
-    // 예시: localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('token'); // 필요 시
+    setUserRole('guest'); // 상태 초기화
     alert('로그아웃 되었습니다.');
-    navigate('/'); // 로그아웃 후 메인으로 이동 (필요시)
+    navigate('/');
   };
 
   return (

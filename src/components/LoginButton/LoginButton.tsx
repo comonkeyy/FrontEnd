@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import SignIn from '../SignIn/SignIn';
 import './LogInButton.css';
-
-export default function LogInButton() {
+interface LogInButtonProps {
+  setUserRole: (role: 'owner' | 'worker' | 'guest' | 'admin') => void; // AppRouter에서 받을 prop
+}
+export default function LogInButton({ setUserRole }: LogInButtonProps) {
+  // props로 setUserRole 받기
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -13,7 +16,11 @@ export default function LogInButton() {
       >
         로그인
       </button>
-      <SignIn isOpen={isModalOpen} close={() => setIsModalOpen(false)} />
+      <SignIn
+        isOpen={isModalOpen}
+        close={() => setIsModalOpen(false)}
+        setUserRole={setUserRole} // SignIn 컴포넌트로 setUserRole 전달
+      />
     </>
   );
 }

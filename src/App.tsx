@@ -15,9 +15,16 @@ import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
 
 const AppRouter: React.FC = () => {
   // 실제로는 로그인 후 userRole을 받아와야 합니다.
+  const storedRole = localStorage.getItem('userRole') as
+    | 'owner'
+    | 'worker'
+    | 'guest'
+    | 'admin'
+    | null;
   const [userRole, setUserRole] = useState<
     'owner' | 'worker' | 'guest' | 'admin'
-  >('owner');
+  >(storedRole ?? 'guest');
+
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);
 
   const handleAdminLogin = (email: string, password: string) => {
@@ -30,6 +37,7 @@ const AppRouter: React.FC = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
+          localStorage.setItem('userRole', 'admin'); // 로컬 스토리지 저장
           setUserRole('admin');
           setIsAdminSignInOpen(false);
           window.location.href = '/admin';
@@ -46,7 +54,8 @@ const AppRouter: React.FC = () => {
   return (
     <Router>
       <div className="min-h-screen bg-[#FFFDF5]">
-        <Header userRole={headerRole} />
+        <Header userRole={headerRole} setUserRole={setUserRole} />
+
         <button
           onClick={() => setIsAdminSignInOpen(true)}
           style={{

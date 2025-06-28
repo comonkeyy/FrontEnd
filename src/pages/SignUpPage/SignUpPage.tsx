@@ -90,22 +90,19 @@ function AddressInput({
 }
 
 export default function SignUpPage() {
-  // 역할 상태 관리 및 모달 상태
   const [role, setRole] = useState<'owner' | 'worker' | ''>('');
   const [roleModalOpen, setRoleModalOpen] = useState(true);
 
-  // 입력값 상태
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [userid, setUserid] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
 
-  // 비밀번호 일치 여부
   const passwordError = password && password2 && password !== password2;
 
-  // 모든 필수 입력값이 채워졌는지 + 비밀번호 일치해야만 활성화
   const isFormValid =
     !!role &&
     !!name &&
@@ -114,18 +111,85 @@ export default function SignUpPage() {
     !!password &&
     !!password2 &&
     !!email &&
+    (role === 'owner' ? !!address : true) &&
     !passwordError;
 
-  // 폼 제출
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     if (!window.confirm('정말로 가입하겠습니까?')) return;
-    alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
-    // 실제 회원가입 API 호출 등 추가
+
+    // --- 더미 데이터 사용 부분 시작 ---
+    try {
+      // 2초 지연을 시뮬레이션하여 실제 네트워크 요청처럼 보이게 함
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // 가상의 성공 응답
+      const mockResponse = {
+        success: true,
+        message: '회원가입이 성공적으로 완료되었습니다.',
+      };
+      // 가상의 실패 응답 (주석 처리하고 싶을 때 활성화)
+      // const mockResponse = { success: false, message: '더미 데이터: 이미 존재하는 아이디입니다.' };
+
+      if (mockResponse.success) {
+        alert(
+          `${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료! (더미 데이터)`,
+        );
+        localStorage.setItem('userRole', role); // 로컬 스토리지에 역할 저장
+        if (role === 'owner') {
+          window.location.href = '/owner/mypage';
+        } else {
+          window.location.href = '/worker/main';
+        }
+      } else {
+        alert(`회원가입 실패: ${mockResponse.message}`);
+      }
+    } catch (error) {
+      console.error('더미 데이터 처리 오류:', error);
+      alert('더미 데이터 처리 중 오류가 발생했습니다.');
+    }
+    // --- 더미 데이터 사용 부분 끝 ---
+
+    // 실제 백엔드 연동 시 위의 더미 데이터 관련 코드를 제거하고 아래 주석을 해제하세요.
+    /*
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          user_id: userid,
+          password,
+          email,
+          role: role === 'owner' ? 'owner' : 'worker',
+          address: role === 'owner' ? address : undefined,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`${role === 'owner' ? '집 소유자' : '복지사'}로 회원가입 완료!`);
+        localStorage.setItem('userRole', role);
+        if (role === 'owner') {
+          window.location.href = '/owner/mypage';
+        } else {
+          window.location.href = '/worker/main';
+        }
+      } else {
+        alert(`회원가입 실패: ${result.message || '알 수 없는 오류'}`);
+      }
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      alert('회원가입 중 네트워크 오류가 발생했습니다.');
+    }
+    */
   };
 
-  // 역할별 안내문구/스타일 분기
   const infoTitle =
     role === 'owner'
       ? '집 소유자로 회원가입'
@@ -151,7 +215,6 @@ export default function SignUpPage() {
 
   return (
     <div className="signup-page flex min-h-screen items-center justify-center bg-[#FFFDF5]">
-      {/* 역할 선택 모달 */}
       <RoleSelectModal
         isOpen={roleModalOpen}
         onSelect={(selectedRole) => {
@@ -205,6 +268,14 @@ export default function SignUpPage() {
                 className="h-11 border-[1.5px] border-[#95B1EE] rounded-lg px-4 text-base bg-[#FFFDF5] text-[#364C84] transition-colors focus:border-[#364C84] outline-none font-bold"
               />
             </div>
+            {role === 'owner' && (
+              <div className="signup-form-group full flex flex-col gap-2 col-span-2">
+                <label htmlFor="address" className="font-bold text-[#364C84]">
+                  집 주소
+                </label>
+                <AddressInput value={address} onChange={setAddress} />
+              </div>
+            )}
             <div className="signup-form-group full flex flex-col gap-2 col-span-2">
               <label htmlFor="userid" className="font-bold text-[#364C84]">
                 아이디
@@ -281,7 +352,6 @@ export default function SignUpPage() {
         <GeminiVoiceChatButton></GeminiVoiceChatButton>
       </div>
 
-      {/* 모달 CSS */}
       <style>{`
           .modal-backdrop {
             position: fixed;
