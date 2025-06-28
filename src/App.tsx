@@ -26,13 +26,13 @@ const AppRouter: React.FC = () => {
   // 로컬 스토리지에서 역할 읽기
   const storedRole = localStorage.getItem('userRole') as
     | 'owner'
-    | 'worker'
+    | 'CW'
     | 'guest'
     | 'admin'
     | null;
 
   const [userRole, setUserRole] = useState<
-    'owner' | 'worker' | 'guest' | 'admin'
+    'owner' | 'CW' | 'guest' | 'admin'
   >(storedRole ?? 'guest');
 
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);

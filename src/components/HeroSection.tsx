@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import img1_HeroSection from '../assets/img1_HeroSection.jpg';
 
 type HeroSectionProps = {
-  userRole: 'owner' | 'worker' | 'guest';
+  userRole: 'owner' | 'CW' | 'guest';
 };
 
 const HeroSection: React.FC<HeroSectionProps> = ({ userRole }) => {
@@ -42,7 +42,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ userRole }) => {
               </div>
             </>
           )}
-          {userRole === 'worker' && (
+          {userRole === 'CW' && (
             <>
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                 따뜻한 보금자리,

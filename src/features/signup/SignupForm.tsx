@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { signup } from '../../api/signup';
 
 export default function SignupForm() {
-  const [userType, setUserType] = useState<'owner' | 'worker'>('owner');
+  const [userType, setUserType] = useState<'owner' | 'CW'>('owner');
   const [form, setForm] = useState({
     user_id: '',
     password: '',
@@ -15,12 +15,12 @@ export default function SignupForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleTypeChange = (type: 'owner' | 'worker') => setUserType(type);
+  const handleTypeChange = (type: 'owner' | 'CW') => setUserType(type);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload =
-      userType === 'worker' ? { ...form, role: 'CW' } : { ...form };
+      userType === 'CW' ? { ...form, role: 'CW' } : { ...form };
 
     try {
       const res = await signup(payload);
@@ -43,8 +43,8 @@ export default function SignupForm() {
         </button>
         <button
           type="button"
-          onClick={() => handleTypeChange('worker')}
-          style={{ fontWeight: userType === 'worker' ? 'bold' : 'normal' }}
+          onClick={() => handleTypeChange('CW')}
+          style={{ fontWeight: userType === 'CW' ? 'bold' : 'normal' }}
         >
           복지사
         </button>

@@ -5,9 +5,9 @@ import LogInButton from '../LoginButton/LoginButton';
 import SignupButton from '../SignUpButton/SignUpButton';
 
 type HeaderProps = {
-  userRole: 'owner' | 'worker' | 'guest';
-  setUserRole: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
-  onLogin: (role: 'owner' | 'worker' | 'admin') => void;
+  userRole: 'owner' | 'CW' | 'guest';
+  setUserRole: (role: 'owner' | 'CW' | 'guest' | 'admin') => void;
+  onLogin: (role: 'owner' | 'CW' | 'admin') => void;
   onLogout: () => void;
 };
 
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
                 </button>
               </>
             )}
-            {userRole === 'worker' && (
+            {userRole === 'CW' && (
               <>
                 <Link
                   to="/request"
@@ -174,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({
                 </button>
               </>
             )}
-            {userRole === 'worker' && (
+            {userRole === 'CW' && (
               <>
                 <Link
                   to="/worker/match"

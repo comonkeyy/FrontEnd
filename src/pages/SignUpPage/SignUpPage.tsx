@@ -6,7 +6,7 @@ function RoleSelectModal({
   onSelect,
 }: {
   isOpen: boolean;
-  onSelect: (role: 'owner' | 'worker') => void;
+  onSelect: (role: 'owner' | 'CW') => void;
 }) {
   if (!isOpen) return null;
   return (
@@ -23,7 +23,7 @@ function RoleSelectModal({
         </button>
         <button
           className="w-full py-5 rounded-lg bg-[#364C84] text-white font-bold text-xl transition-colors hover:bg-[#2A3B68] shadow"
-          onClick={() => onSelect('worker')}
+          onClick={() => onSelect('CW')}
         >
           복지사로 회원가입하기
         </button>
@@ -89,7 +89,7 @@ function AddressInput({
 }
 
 export default function SignUpPage() {
-  const [role, setRole] = useState<'owner' | 'worker' | ''>('');
+  const [role, setRole] = useState<'owner' | 'CW' | ''>('');
   const [roleModalOpen, setRoleModalOpen] = useState(true);
 
   const [name, setName] = useState('');
@@ -128,7 +128,7 @@ export default function SignUpPage() {
           user_id,
           password,
           email,
-          role: role === 'worker' ? 'CW' : 'owner', // 반드시 이렇게 변환!
+          role: role === 'CW' ? 'CW' : 'owner', // 반드시 이렇게 변환!
           address: role === 'owner' ? address : '',
         }),
       });
@@ -152,7 +152,7 @@ export default function SignUpPage() {
   const infoTitle =
     role === 'owner'
       ? '집 소유자로 회원가입'
-      : role === 'worker'
+      : role === 'CW'
         ? '복지사로 회원가입'
         : '';
   const infoList =

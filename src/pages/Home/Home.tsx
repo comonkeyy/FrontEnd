@@ -8,7 +8,7 @@ import CTASection from '../../components/CTASection';
 import GeminiVoiceChatButton from '../../components/GeminiVoiceChatButton';
 
 type HomeProps = {
-  userRole: 'owner' | 'worker' | 'guest';
+  userRole: 'owner' | 'CW' | 'guest';
 };
 
 const Home: React.FC<HomeProps> = ({ userRole }) => (

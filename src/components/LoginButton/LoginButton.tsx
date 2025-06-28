@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SignIn from '../SignIn/SignIn';
 import './LogInButton.css';
 interface LogInButtonProps {
-  setUserRole: (role: 'owner' | 'worker' | 'guest' | 'admin') => void; // AppRouter에서 받을 prop
-  onLogin: (role: 'owner' | 'worker' | 'admin') => void;
+  setUserRole: (role: 'owner' | 'CW' | 'guest' | 'admin') => void; // AppRouter에서 받을 prop
+  onLogin: (role: 'owner' | 'CW' | 'admin') => void;
 }
 
 export default function LogInButton({

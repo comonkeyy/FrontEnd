@@ -33,14 +33,14 @@ const AppRouter: React.FC = () => {
   // 로컬 스토리지에서 역할 읽기
   const storedRole = localStorage.getItem('userRole') as
     | 'owner'
-    | 'worker'
+    | 'CW'
     | 'guest'
     | 'admin'
     | null;
 
-  const [userRole, setUserRole] = useState<
-    'owner' | 'worker' | 'guest' | 'admin'
-  >(storedRole ?? 'guest');
+  const [userRole, setUserRole] = useState<'owner' | 'CW' | 'guest' | 'admin'>(
+    storedRole ?? 'guest',
+  );
 
   const [isAdminSignInOpen, setIsAdminSignInOpen] = useState(false);
 
@@ -48,12 +48,29 @@ const AppRouter: React.FC = () => {
   const navigate = useNavigate();
 
   // 로그인 핸들러 (SignIn 컴포넌트에서 호출될 일반 사용자 로그인 로직)
-  const handleLogin = (role: 'owner' | 'worker' | 'admin') => {
-    localStorage.setItem('userRole', role); // 로컬 스토리지 저장
-    setUserRole(role);
-    if (role === 'owner') {
+  const handleLogin = (
+    role: 'owner' | 'worker' | 'admin' | 'USER' | 'OWNER',
+  ) => {
+    // 백엔드에서 오는 다양한 역할 값을 프론트엔드 역할로 변환
+    let normalizedRole: 'owner' | 'worker' | 'admin' = 'worker'; // 기본값 설정
+
+    const upperCaseRole = typeof role === 'string' ? role.toUpperCase() : '';
+
+    if (upperCaseRole === 'OWNER' || upperCaseRole === 'OWNER') {
+      normalizedRole = 'owner';
+    } else if (upperCaseRole === 'WORKER' || upperCaseRole === 'USER') {
+      // 'USER'를 'worker'로 취급
+      normalizedRole = 'worker';
+    } else if (upperCaseRole === 'ADMIN') {
+      normalizedRole = 'admin';
+    }
+
+    localStorage.setItem('userRole', normalizedRole); // 변환된 역할 저장
+    setUserRole(normalizedRole); // 변환된 역할로 상태 업데이트
+
+    if (normalizedRole === 'owner') {
       navigate('/owner/mypage');
-    } else if (role === 'worker') {
+    } else if (normalizedRole === 'worker') {
       navigate('/worker/main');
     } else {
       navigate('/');

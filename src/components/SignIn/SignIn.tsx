@@ -7,8 +7,8 @@ interface SignInProps {
   close: () => void;
   onAdminLogin?: (email: string, password: string) => void;
   adminMode?: boolean;
-  setUserRole?: (role: 'owner' | 'worker' | 'guest' | 'admin') => void;
-  onLogin?: (role: 'owner' | 'worker' | 'admin') => void;
+  setUserRole?: (role: 'owner' | 'CW' | 'guest' | 'admin') => void;
+  onLogin?: (role: 'owner' | 'CW' | 'admin') => void;
 }
 
 export default function SignIn({
