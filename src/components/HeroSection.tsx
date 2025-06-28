@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import img1_HeroSection from '../assets/img1_HeroSection.jpg';
+import img1_HeroSection from '../assets/61879_112530_424.jpg';
 
 type HeroSectionProps = {
   userRole: 'owner' | 'CW' | 'guest';

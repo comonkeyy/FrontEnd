@@ -1,4 +1,6 @@
 import React from 'react';
+import matchingImageUrl from '../assets/Gemini_Generated_Image_31mk9j31mk9j31mk.png';
+import matchingImageUrl2 from '../assets/Gemini_Generated_Image_kqvt24kqvt24kqvt.png';
 
 const ServiceIntroSection: React.FC = () => (
   <section className="py-16 bg-white">
@@ -34,9 +36,9 @@ const ServiceIntroSection: React.FC = () => (
         <div className="bg-[#FFFDF5] rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
           <div className="h-48 overflow-hidden">
             <img
-              src="https://readdy.ai/api/search-image?query=A%20care%20worker%20being%20matched%20with%20a%20house%20in%20a%20rural%20Korean%20village%2C%20showing%20a%20digital%20interface%20with%20profile%20matching%20and%20house%20details.%20The%20scene%20has%20warm%20lighting%20with%20a%20soft%20color%20palette%2C%20emphasizing%20the%20human%20connection%20in%20the%20matching%20process&width=400&height=200&seq=service-2&orientation=landscape"
+              src={matchingImageUrl}
               alt="복지사 맞춤형 매칭"
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover object-[50%_35%]"
             />
           </div>
           <div className="p-6">
@@ -53,18 +55,18 @@ const ServiceIntroSection: React.FC = () => (
         <div className="bg-[#FFFDF5] rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
           <div className="h-48 overflow-hidden">
             <img
-              src="https://readdy.ai/api/search-image?query=Workers%20renovating%20and%20remodeling%20a%20traditional%20Korean%20house%2C%20showing%20interior%20and%20exterior%20improvements.%20The%20scene%20has%20natural%20lighting%20highlighting%20the%20transformation%20process%20with%20modern%20amenities%20being%20installed%20while%20preserving%20traditional%20elements&width=400&height=200&seq=service-3&orientation=landscape"
+              src={matchingImageUrl2}
               alt="리모델링 및 정비 지원"
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover object-center"
             />
           </div>
           <div className="p-6">
             <h3 className="text-xl font-bold text-[#364C84] mb-3">
-              리모델링 및 정비 지원
+              사회 문제 해결
             </h3>
             <p className="text-gray-600 mb-4">
-              빈집의 상태를 개선하기 위한 리모델링, 정비, 안전 점검 등을
-              지원합니다. 전문가의 도움을 받아보세요.
+              방치된 빈집을 활용해 도시 슬럼화를 방지하고, 복지 인력의 정착을
+              통해 고령화와 인구감소에 대응할 수 있습니다.
             </p>
           </div>
         </div>
