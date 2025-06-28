@@ -80,30 +80,31 @@ const AppRouter: React.FC = () => {
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
-
-        <button
-          onClick={() => setIsAdminSignInOpen(true)}
-          style={{
-            position: 'fixed',
-            left: 24,
-            bottom: 24,
-            zIndex: 1000,
-            background: '#364C84',
-            color: 'white',
-            padding: '7px 16px',
-            borderRadius: '6px',
-            fontWeight: 500,
-            fontSize: '0.95rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            border: 'none',
-            cursor: 'pointer',
-            minWidth: 90,
-            minHeight: 36,
-          }}
-        >
-          관리자 로그인
-        </button>
-
+        {/* 게스트일 때만 관리자 로그인 버튼 노출 */}
+        {userRole === 'guest' && (
+          <button
+            onClick={() => setIsAdminSignInOpen(true)}
+            style={{
+              position: 'fixed',
+              left: 24,
+              bottom: 24,
+              zIndex: 1000,
+              background: '#364C84',
+              color: 'white',
+              padding: '7px 16px',
+              borderRadius: '6px',
+              fontWeight: 500,
+              fontSize: '0.95rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              border: 'none',
+              cursor: 'pointer',
+              minWidth: 90,
+              minHeight: 36,
+            }}
+          >
+            관리자 로그인
+          </button>
+        )}
         <SignIn
           isOpen={isAdminSignInOpen}
           close={() => setIsAdminSignInOpen(false)}

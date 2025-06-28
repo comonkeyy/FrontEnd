@@ -48,22 +48,26 @@ export default function SignIn({
     try {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
       const foundUser = users.find(
-        (user: any) => user.email === email && user.password === password,
+        (user: any) =>
+          user.email === email &&
+          user.password === password &&
+          user.role === role, // 역할까지 일치해야 로그인
       );
 
       if (foundUser) {
         const userRole = foundUser.role || 'owner';
         alert(`${userRole === 'owner' ? '집 소유주' : '복지사'} 로그인 성공!`);
 
-        // 로그인 성공 처리
         if (onLogin) {
           onLogin(userRole);
         }
 
-        // 로그인 상태 저장
+        if (setUserRole) {
+          setUserRole(userRole);
+        }
+
         localStorage.setItem('currentUser', JSON.stringify(foundUser));
 
-        // 역할에 따라 분기해서 이동
         if (userRole === 'owner') {
           navigate('/owner/mypage');
         } else if (userRole === 'worker') {
@@ -74,7 +78,9 @@ export default function SignIn({
 
         close();
       } else {
-        alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+        alert(
+          '해당 역할의 계정이 아니거나, 이메일/비밀번호가 올바르지 않습니다.',
+        );
       }
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);
@@ -101,74 +107,81 @@ export default function SignIn({
           >
             {adminMode ? '관리자 로그인' : '로그인'}
           </h2>
-          {/* 역할 선택 UI */}
-          <div
-            className="login-role-select"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '1rem',
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              loginClickHandler();
             }}
           >
-            {!adminMode && (
-              <>
+            {/* 역할 선택 UI */}
+            <div
+              className="login-role-select"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '1rem',
+              }}
+            >
+              {!adminMode && (
+                <>
+                  <button
+                    type="button"
+                    className={`role-btn ${role === 'owner' ? 'active' : ''}`}
+                    onClick={() => setRole('owner')}
+                  >
+                    집 소유자
+                  </button>
+                  <button
+                    type="button"
+                    className={`role-btn ${role === 'worker' ? 'active' : ''}`}
+                    onClick={() => setRole('worker')}
+                  >
+                    복지사
+                  </button>
+                </>
+              )}
+              {adminMode && (
                 <button
                   type="button"
-                  className={`role-btn ${role === 'owner' ? 'active' : ''}`}
-                  onClick={() => setRole('owner')}
+                  className={`role-btn active`}
+                  disabled
+                  style={{ minWidth: 120 }}
                 >
-                  집 소유자
+                  관리자
                 </button>
-                <button
-                  type="button"
-                  className={`role-btn ${role === 'worker' ? 'active' : ''}`}
-                  onClick={() => setRole('worker')}
-                >
-                  복지사
-                </button>
-              </>
-            )}
-            {adminMode && (
-              <button
-                type="button"
-                className={`role-btn active`}
-                disabled
-                style={{ minWidth: 120 }}
-              >
-                관리자
-              </button>
-            )}
-          </div>
-          <input
-            name="email"
-            className="loginId"
-            type="text"
-            placeholder="이메일"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: '100%', marginBottom: 12 }}
-          />
-          <input
-            name="password"
-            className="loginPw"
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: '100%', marginBottom: 20 }}
-          />
-          <button
-            className="loginBtn"
-            onClick={loginClickHandler}
-            style={{
-              width: '100%',
-              fontWeight: 600,
-              fontSize: '1.1rem',
-              marginBottom: 16,
-            }}
-          >
-            로그인
-          </button>
+              )}
+            </div>
+            <input
+              name="email"
+              className="loginId"
+              type="text"
+              placeholder="이메일"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{ width: '100%', marginBottom: 12 }}
+            />
+            <input
+              name="password"
+              className="loginPw"
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '100%', marginBottom: 20 }}
+            />
+            <button
+              className="loginBtn"
+              type="submit"
+              style={{
+                width: '100%',
+                fontWeight: 600,
+                fontSize: '1.1rem',
+                marginBottom: 16,
+              }}
+            >
+              로그인
+            </button>
+          </form>
           {!adminMode && (
             <div className="loginEnd">
               <div className="loginLine">
