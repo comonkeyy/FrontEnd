@@ -8,6 +8,9 @@ import MyPage from './pages/owner/MyPage';
 import HouseRegisterForm from './pages/HouseRegisterForm';
 import SignIn from './components/SignIn/SignIn';
 import AdminPage from './pages/AdminPage/AdminPage';
+import MatchRequestPage from './pages/MatchRequestPage/MatchRequestPage';
+import MatchCompletePage from './pages/MatchCompletePage/MatchComplete';
+import WorkerReview from './pages/WorkerReviewPage/WorkerReview';
 
 // 복지사 메인 페이지 컴포넌트
 const WorkerMainPage: React.FC = () => {
@@ -121,6 +124,9 @@ const AppRouter: React.FC = () => {
           <Route path="/owner/waitinglist" element={<MyPage />} />
           <Route path="/owner/matchedlist" element={<MyPage />} />
           <Route path="/worker/main" element={<WorkerMainPage />} />
+          <Route path="/request" element={<MatchRequestPage />} />
+          <Route path="/complete" element={<MatchCompletePage />} />
+          <Route path="/review" element={<WorkerReview />} />
           <Route
             path="/admin"
             element={

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VacantHouseForm from '@/features/auth/vacant-house/VacantHouseForm';
 import type { VacantHouseData } from '@/types/vacantHouse';
+import { deleteHouse, updateHouse } from '@/api/house';
+import { getMyHouses } from '@/api/house';
 
 interface VacantHouse {
   id: string;
@@ -23,11 +25,9 @@ const MyPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (location.pathname === '/owner/matchedlist') {
-      setActiveTab('completed');
-    } else {
-      setActiveTab('waiting');
-    }
+    getMyHouses()
+      .then((res) => setHouses(res.data))
+      .catch(() => alert('빈집 목록 조회 실패'));
   }, [location.pathname]);
 
   // 탭 변경 시 URL 업데이트
@@ -95,11 +95,16 @@ const MyPage: React.FC = () => {
     setSelectedHouseId(id);
     setShowDeleteModal(true);
   };
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedHouseId) {
-      setHouses(houses.filter((house) => house.id !== selectedHouseId));
-      setShowDeleteModal(false);
-      setSelectedHouseId(null);
+      try {
+        await deleteHouse(selectedHouseId); // 서버에 삭제 요청
+        setHouses(houses.filter((house) => house.id !== selectedHouseId)); // 상태 갱신
+        setShowDeleteModal(false);
+        setSelectedHouseId(null);
+      } catch (e) {
+        alert('삭제 실패');
+      }
     }
   };
 
@@ -284,18 +289,20 @@ const MyPage: React.FC = () => {
                 description: editingHouse.description,
                 images: editingHouse.images,
               }}
-              onSubmit={(data) => {
-                setHouses((prevHouses) =>
-                  prevHouses.map((house) =>
-                    house.id === editingHouse.id
-                      ? {
-                          ...house,
-                          ...data,
-                        }
-                      : house,
-                  ),
-                );
-                setShowEditModal(false);
+              onSubmit={async (data) => {
+                try {
+                  await updateHouse(editingHouse.id, data);
+                  setHouses((prevHouses) =>
+                    prevHouses.map((house) =>
+                      house.id === editingHouse.id
+                        ? { ...house, ...data }
+                        : house,
+                    ),
+                  );
+                  setShowEditModal(false);
+                } catch (e) {
+                  alert('수정 실패');
+                }
               }}
               onCancel={() => setShowEditModal(false)}
             />
