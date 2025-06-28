@@ -1,7 +1,30 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+// 임시 데이터 타입 정의 (실제 API 데이터에 맞게 수정 필요)
+interface House {
+  id: number;
+  title: string;
+  status: string;
+  address: string;
+  imageUrl: string;
+  details: string;
+  monthlyRent: string;
+  deposit: string;
+  area: string;
+  rooms: string;
+  bathrooms: string;
+  floor: string;
+  features: string[];
+  distance: string;
+  condition: string;
+  lastRenovated: string;
+  selected: boolean;
+}
+
 const MatchCompletePage: React.FC = () => {
-  const [houses] = useState([
+  // 실제로는 API로 데이터를 받아와야 합니다.
+  const [houses, setHouses] = useState<House[]>([
     {
       id: 1,
       title: '안계면 한옥 빈집',
@@ -83,211 +106,181 @@ const MatchCompletePage: React.FC = () => {
       selected: false,
     },
   ]);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedHouse, setSelectedHouse] = useState<any>(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [selectedHouses, setSelectedHouses] = useState<number[]>([]);
-  const handleSelectHouse = (id: number) => {
-    if (selectedHouses.includes(id)) {
-      setSelectedHouses(selectedHouses.filter((houseId) => houseId !== id));
-    } else {
-      setSelectedHouses([...selectedHouses, id]);
+  const [selectedHouse, setSelectedHouse] = useState<House | null>(null);
+
+  const handleAddToCart = async (houseId: number) => {
+    const token = localStorage.getItem('accessToken');
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (!token || !currentUser) {
+      alert('카트에 담으려면 로그인이 필요합니다.');
+      return;
+    }
+
+    const careworkerId = JSON.parse(currentUser).id;
+
+    if (!window.confirm('이 매물을 카트에 담으시겠습니까?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/care-workers/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          careworker_id: careworkerId,
+          house_id: houseId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert(`매물이 카트에 담겼습니다. (카트 ID: ${result.id})`);
+      } else {
+        const errorMessage = result.message || '카트에 담는 데 실패했습니다. 이미 카트에 있는 매물일 수 있습니다.';
+        throw new Error(errorMessage);
+      }
+    } catch (error: any) {
+      console.error('카트 담기 오류:', error);
+      alert(`오류가 발생했습니다: ${error.message}`);
     }
   };
-  const handleViewDetails = (house: any) => {
+
+  const handleViewDetails = (house: House) => {
     setSelectedHouse(house);
   };
+
   const handleBackToList = () => {
     setSelectedHouse(null);
   };
 
   const filteredHouses = houses.filter((house) => {
-    // Search term filter
     const matchesSearch =
       house.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       house.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       house.details.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex min-h-screen">
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-800">빈집 목록</h1>
-            </div>
-            {selectedHouse ? (
-              <div>
-                <button
-                  onClick={handleBackToList}
-                  className="mb-4 flex items-center text-[#364C84] hover:text-[#4A62A3] transition-colors duration-200 cursor-pointer"
-                >
-                  <i className="fas fa-arrow-left mr-2"></i>
-                  목록으로 돌아가기
-                </button>
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="md:w-1/2">
-                      <div className="rounded-lg overflow-hidden shadow-md">
-                        <img
-                          src={selectedHouse.imageUrl}
-                          alt={selectedHouse.title}
-                          className="w-full h-80 object-cover object-top"
-                        />
-                      </div>
-                      <div className="mt-6">
-                        <h3 className="text-lg font-medium text-gray-800 mb-2">
-                          위치 정보
-                        </h3>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-center mb-2">
-                            <i className="fas fa-map-marker-alt text-red-500 mr-2"></i>
-                            <span className="text-gray-700">
-                              {selectedHouse.address}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {selectedHouse ? (
+          // 상세 보기 화면
+          <div>
+            <button
+              onClick={handleBackToList}
+              className="mb-6 flex items-center text-[#364C84] hover:text-[#4A62A3] transition-colors duration-200 font-semibold"
+            >
+              <i className="fas fa-arrow-left mr-2"></i>
+              목록으로 돌아가기
+            </button>
+            <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="flex flex-col md:flex-row">
+                <div className="md:w-1/2">
+                  <img
+                    src={selectedHouse.imageUrl}
+                    alt={selectedHouse.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="md:w-1/2 p-8 flex flex-col">
+                  <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-3xl font-bold text-gray-800">
+                      {selectedHouse.title}
+                    </h2>
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium whitespace-nowrap">
+                      입주 가능
+                    </span>
+                  </div>
+                  <p className="text-gray-600 mt-1 mb-6">
+                    <i className="fas fa-map-marker-alt mr-2 text-gray-400"></i>
+                    {selectedHouse.address}
+                  </p>
+                  <div className="grid grid-cols-2 gap-6 mb-6 text-center bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">면적</p>
+                      <p className="text-lg text-gray-800 font-bold">
+                        {selectedHouse.area}㎡
+                      </p>
                     </div>
-                    <div className="md:w-1/2">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h2 className="text-2xl font-bold text-gray-800">
-                            {selectedHouse.title}
-                          </h2>
-                          <p className="text-gray-600 mt-1">
-                            <i className="fas fa-map-marker-alt mr-2"></i>
-                            {selectedHouse.address}
-                          </p>
-                        </div>
-                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                          입주 가능
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                          <p className="text-sm text-gray-500 mb-1">면적</p>
-                          <p className="text-gray-700 font-medium">
-                            {selectedHouse.area}㎡
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500 mb-1">층수</p>
-                          <p className="text-gray-700 font-medium">
-                            {selectedHouse.floor}층
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex justify-end space-x-3">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">층수</p>
+                      <p className="text-lg text-gray-800 font-bold">
+                        {selectedHouse.floor}층
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex justify-end">
+                    <button
+                      onClick={() => handleAddToCart(selectedHouse.id)}
+                      className="px-6 py-3 bg-[#364C84] hover:bg-[#4A62A3] text-white rounded-lg transition-colors duration-200 font-bold flex items-center"
+                    >
+                      <i className="fas fa-cart-plus mr-2"></i>
+                      카트에 담기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // 목록 보기 화면
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">매물 현황</h1>
+            {filteredHouses.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-lg shadow-md">
+                <i className="fas fa-home text-gray-400 text-6xl mb-4"></i>
+                <p className="text-gray-500 text-lg">
+                  조건에 맞는 빈집이 없습니다.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredHouses.map((house) => (
+                  <div
+                    key={house.id}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col"
+                  >
+                    <div className="relative">
+                      <img
+                        src={house.imageUrl}
+                        alt={house.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    </div>
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h3 className="text-lg font-bold text-gray-800">
+                        {house.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm mt-1 mb-4">
+                        <i className="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                        {house.address}
+                      </p>
+                      <div className="mt-auto">
                         <button
-                          onClick={() => handleSelectHouse(selectedHouse.id)}
-                          className="px-4 py-2 bg-[#364C84] hover:bg-[#4A62A3] text-white rounded-lg transition-colors duration-200 !rounded-button whitespace-nowrap cursor-pointer"
+                          onClick={() => handleViewDetails(house)}
+                          className="w-full px-4 py-2 bg-[#364C84] text-white rounded-lg hover:bg-[#4A62A3] transition-colors duration-200 font-semibold"
                         >
-                          신청하기
+                          상세 정보 보기
                         </button>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div>
-                  {filteredHouses.length === 0 ? (
-                    <div className="text-center py-10 bg-white rounded-lg shadow-md">
-                      <i className="fas fa-home text-gray-400 text-5xl mb-4"></i>
-                      <p className="text-gray-500">
-                        검색 조건에 맞는 빈집이 없습니다.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {filteredHouses.map((house) => (
-                        <div
-                          key={house.id}
-                          className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-200"
-                        >
-                          <div className="relative">
-                            <img
-                              src={house.imageUrl}
-                              alt={house.title}
-                              className="w-full h-48 object-cover object-top"
-                            />
-                          </div>
-                          <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-lg font-medium text-gray-800">
-                                {house.title}
-                              </h3>
-                              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                                입주 가능
-                              </span>
-                            </div>
-                            <p className="text-gray-600 text-sm mb-2">
-                              <i className="fas fa-map-marker-alt mr-1"></i>
-                              {house.address}
-                            </p>
-                            <div className="flex justify-between mb-3">
-                              <div>
-                                <p className="text-sm text-gray-500">면적</p>
-                                <p className="font-medium">{house.area}㎡</p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-gray-500">층수</p>
-                                <p className="font-medium">{house.floor}층</p>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => handleViewDetails(house)}
-                              className="w-full px-4 py-2 bg-[#364C84] text-white rounded-lg hover:bg-[#4A62A3] transition-colors duration-200 !rounded-button whitespace-nowrap cursor-pointer"
-                            >
-                              상세 정보 보기
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                ))}
               </div>
             )}
           </div>
-        </main>
+        )}
       </div>
-      {/* Confirmation Modal */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">매칭 확정</h2>
-            <p className="text-gray-600 mb-6">
-              선택하신 {selectedHouses.length}개의 빈집에 대한 매칭을
-              확정하시겠습니까? 확정 후에는 담당자가 연락을 드립니다.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 !rounded-button whitespace-nowrap cursor-pointer"
-              >
-                취소
-              </button>
-              <button
-                onClick={() => {
-                  alert(
-                    '매칭이 확정되었습니다. 담당자가 빠른 시일 내에 연락드릴 예정입니다.',
-                  );
-                  setShowConfirmModal(false);
-                }}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 !rounded-button whitespace-nowrap cursor-pointer"
-              >
-                확정
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
 export default MatchCompletePage;
