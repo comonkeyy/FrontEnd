@@ -26,9 +26,15 @@ const MyPage: React.FC = () => {
 
   useEffect(() => {
     getMyHouses()
-      .then((res) => setHouses(res.data))
-      .catch(() => alert('빈집 목록 조회 실패'));
-  }, [location.pathname]);
+      .then((res) => {
+        console.log('빈집 목록 응답:', res);
+        setHouses(res.data);
+      })
+      .catch((err) => {
+        console.error('빈집 목록 조회 실패:', err);
+        alert('빈집 목록 조회 실패');
+      });
+  }, []); // 의존성 배열 추가
 
   // 탭 변경 시 URL 업데이트
   const handleTabChange = (tab: 'waiting' | 'completed') => {

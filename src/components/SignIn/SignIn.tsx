@@ -38,7 +38,7 @@ export default function SignIn({
       return;
     }
 
-    // 관리자 모드
+    // 관리자 모드는 기존 로직 유지
     if (adminMode && onAdminLogin) {
       onAdminLogin(email, password);
       close();
@@ -46,47 +46,60 @@ export default function SignIn({
     }
 
     try {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find(
-        (user: any) =>
-          user.email === email &&
-          user.password === password &&
-          user.role === role, // 역할까지 일치해야 로그인
-      );
+      // 1. 백엔드 API 호출
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          ...(role === 'worker' ? { role: 'CW' } : {}),
+        }),
+      });
 
-      if (foundUser) {
-        const userRole = foundUser.role || 'owner';
+      // 2. 응답 상태 확인
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('서버 응답 오류:', response.status, errorText);
+        alert(`로그인 실패: ${response.status} - ${errorText || '서버 오류'}`);
+        return;
+      }
+
+      // 3. JSON 파싱 및 데이터 확인
+      const result = await response.json();
+      console.log('로그인 응답 데이터:', result); // 응답 데이터 로그 출력
+
+      if (result.accessToken) {
+        // 4. 토큰 및 유저 정보 저장
+        localStorage.setItem('accessToken', result.accessToken);
+        localStorage.setItem('refreshToken', result.refreshToken);
+        localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+        // 5. 역할 처리
+        const userRole = result.user.role === 'CW' ? 'worker' : 'owner';
+
+        if (onLogin) onLogin(userRole);
+        if (setUserRole) setUserRole(userRole);
+
         alert(`${userRole === 'owner' ? '집 소유주' : '복지사'} 로그인 성공!`);
 
-        if (onLogin) {
-          onLogin(userRole);
-        }
-
-        if (setUserRole) {
-          setUserRole(userRole);
-        }
-
-        localStorage.setItem('currentUser', JSON.stringify(foundUser));
-
-        if (userRole === 'owner') {
-          navigate('/owner/mypage');
-        } else if (userRole === 'worker') {
-          navigate('/worker/main');
-        } else {
-          navigate('/');
-        }
+        // 6. 페이지 이동
+        if (userRole === 'owner') navigate('/owner/mypage');
+        else if (userRole === 'worker') navigate('/worker/main');
+        else navigate('/');
 
         close();
       } else {
-        alert(
-          '해당 역할의 계정이 아니거나, 이메일/비밀번호가 올바르지 않습니다.',
-        );
+        console.error('토큰 없음:', result);
+        alert('토큰 정보가 없습니다. 서버 응답을 확인해주세요.');
       }
     } catch (error) {
+      // 7. 네트워크 오류 처리
       console.error('로그인 처리 중 오류:', error);
-      alert('로그인 중 알 수 없는 오류가 발생했습니다.');
+      alert('로그인 중 네트워크 오류가 발생했습니다.');
     }
   };
+    
 
   if (!isOpen) return null;
 

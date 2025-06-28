@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://10.58.2.17:8000',
+        target: 'http://localhost:3000', // 백엔드 주소
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
