@@ -19,7 +19,7 @@ export default function SignIn({
   setUserRole,
   onLogin,
 }: SignInProps) {
-  const [userId, setUserId] = useState('');
+  const [user_Id, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'owner' | 'CW' | 'admin'>('owner');
   const navigate = useNavigate();
@@ -33,14 +33,14 @@ export default function SignIn({
   }, [isOpen]);
 
   const loginClickHandler = async () => {
-    if (!userId || !password) {
+    if (!user_Id || !password) {
       alert('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
     // 관리자 모드는 기존 로직 유지
     if (adminMode && onAdminLogin) {
-      onAdminLogin(userId, password);
+      onAdminLogin(user_Id, password);
       close();
       return;
     }
@@ -51,7 +51,7 @@ export default function SignIn({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId, // ← email이 아니라 user_id로 key를 맞춰야 함
+          user_id: user_Id, // ← email이 아니라 user_id로 key를 맞춰야 함
           password,
           ...(role === 'CW' ? { role: 'CW' } : { role: 'owner' }),
         }),
@@ -164,11 +164,11 @@ export default function SignIn({
               )}
             </div>
             <input
-              name="userId"
+              name="user_Id"
               className="loginId"
               type="text"
-              placeholder="이메일"
-              value={userId}
+              placeholder="아이디"
+              value={user_Id}
               onChange={(e) => setUserId(e.target.value)}
               style={{ width: '100%', marginBottom: 12 }}
             />
