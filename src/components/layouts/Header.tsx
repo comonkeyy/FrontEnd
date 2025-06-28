@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({
                   빈집 등록
                 </Link>
                 <Link
-                  to="/owner/watinglist"
+                  to="/owner/waitinglist"
                   className="hover:text-[#E7F1A8] transition-colors whitespace-nowrap"
                 >
                   매칭 대기중인 빈집
@@ -149,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({
                   빈집 등록
                 </Link>
                 <Link
-                  to="/owner/watinglist"
+                  to="/owner/waitinglist"
                   className="text-white hover:text-[#E7F1A8] transition-colors"
                 >
                   매칭 대기중인 빈집

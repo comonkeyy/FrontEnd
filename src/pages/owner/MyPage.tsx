@@ -33,7 +33,7 @@ const MyPage: React.FC = () => {
   // 탭 변경 시 URL 업데이트
   const handleTabChange = (tab: 'waiting' | 'completed') => {
     setActiveTab(tab);
-    navigate(tab === 'waiting' ? '/owner/watinglist' : '/owner/matchedlist');
+    navigate(tab === 'waiting' ? '/owner/waitinglist' : '/owner/matchedlist');
   };
   const [houses, setHouses] = useState<VacantHouseData[]>([
     {

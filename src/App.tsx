@@ -118,7 +118,7 @@ const AppRouter: React.FC = () => {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/register-property" element={<HouseRegisterForm />} />
           <Route path="/owner/mypage" element={<MyPage />} />
-          <Route path="/owner/watinglist" element={<MyPage />} />
+          <Route path="/owner/waitinglist" element={<MyPage />} />
           <Route path="/owner/matchedlist" element={<MyPage />} />
           <Route path="/worker/main" element={<WorkerMainPage />} />
           <Route
