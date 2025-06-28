@@ -19,28 +19,28 @@ export default function SignIn({
   setUserRole,
   onLogin,
 }: SignInProps) {
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'owner' | 'worker' | 'admin'>('owner');
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
-      setEmail('');
+      setUserId('');
       setPassword('');
       setRole('owner');
     }
   }, [isOpen]);
 
   const loginClickHandler = async () => {
-    if (!email || !password) {
+    if (!userId || !password) {
       alert('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
     // 관리자 모드는 기존 로직 유지
     if (adminMode && onAdminLogin) {
-      onAdminLogin(email, password);
+      onAdminLogin(userId, password);
       close();
       return;
     }
@@ -51,7 +51,7 @@ export default function SignIn({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
+          user_id: userId, // ← email이 아니라 user_id로 key를 맞춰야 함
           password,
           ...(role === 'worker' ? { role: 'CW' } : {}),
         }),
@@ -99,7 +99,6 @@ export default function SignIn({
       alert('로그인 중 네트워크 오류가 발생했습니다.');
     }
   };
-    
 
   if (!isOpen) return null;
 
@@ -165,12 +164,12 @@ export default function SignIn({
               )}
             </div>
             <input
-              name="email"
+              name="userId"
               className="loginId"
               type="text"
               placeholder="이메일"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
               style={{ width: '100%', marginBottom: 12 }}
             />
             <input

@@ -51,11 +51,11 @@ const AppRouter: React.FC = () => {
   };
 
   // 관리자 로그인
-  const handleAdminLogin = (email: string, password: string) => {
+  const handleAdminLogin = (user_id: string, password: string) => {
     fetch('http://10.58.2.17:8000/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, role: 'M' }),
+      body: JSON.stringify({ user_id, password, role: 'M' }),
     })
       .then((res) => res.json())
       .then((res) => {

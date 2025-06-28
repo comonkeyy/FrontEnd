@@ -16,14 +16,13 @@ export async function signUpUser(data: {
   });
   return res.json(); // { message, userId }
 }
-
 export async function loginUser(data: { user_id: string; password: string }) {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data), // data 객체 자체가 {user_id, password}
   });
-  return res.json(); // { token, user, ... }
+  return res.json();
 }
 
 export const getUsers = async (): Promise<User[]> => {

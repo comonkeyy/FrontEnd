@@ -2,14 +2,14 @@ import api from './axiosInstance';
 
 // 회원가입
 export const signUp = (data: {
-  email: string;
+  user_id: string;
   password: string;
   name: string;
   role: '복지사' | '소유주' | '관리자';
 }) => api.post('/api/auth/signup', data);
 
 // 로그인
-export const signIn = (data: { email: string; password: string }) =>
+export const signIn = (data: { user_id: string; password: string }) =>
   api.post('/api/auth/login', data);
 
 // 로그아웃
@@ -25,5 +25,5 @@ export const changePassword = (data: {
 }) => api.patch('/api/auth/password', data);
 
 // 비밀번호 초기화
-export const resetPassword = (data: { email: string }) =>
+export const resetPassword = (data: { user_id: string }) =>
   api.post('/api/auth/password-reset', data);

@@ -69,17 +69,17 @@ const AppRouter: React.FC = () => {
   };
 
   // 관리자 로그인 핸들러 (SignIn 컴포넌트에서 호출)
-  const handleAdminLogin = async (email: string, password: string) => {
+  const handleAdminLogin = async (user_id: string, password: string) => {
     // async 함수로 변경
     // 더미 관리자 계정 정보
     const dummyAdmin = {
-      email: 'admin@example.com',
+      user_id: 'admin@example.com',
       password: 'admin123',
     };
 
     try {
       // 1. 더미 데이터로 먼저 검증 (네트워크 요청 없이 빠르게 테스트)
-      if (email === dummyAdmin.email && password === dummyAdmin.password) {
+      if (user_id === dummyAdmin.user_id && password === dummyAdmin.password) {
         alert('관리자 더미 로그인 성공!');
         localStorage.setItem('userRole', 'admin');
         setUserRole('admin');
@@ -92,7 +92,7 @@ const AppRouter: React.FC = () => {
       const response = await fetch('http://10.58.2.17:8000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role: 'M' }), // 백엔드 역할이 'admin'인지 'M'인지 정확히 확인하고 일치시키세요!
+        body: JSON.stringify({ user_id, password, role: 'M' }), // 백엔드 역할이 'admin'인지 'M'인지 정확히 확인하고 일치시키세요!
       });
 
       const result = await response.json();
