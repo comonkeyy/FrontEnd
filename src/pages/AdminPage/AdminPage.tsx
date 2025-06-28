@@ -1,6 +1,7 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface VacantHouse {
   id: string;
@@ -58,6 +59,7 @@ interface Notice {
 }
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<
     'dashboard' | 'matchings' | 'houses' | 'reviews' | 'notices' | 'users'
   >('dashboard');
@@ -360,6 +362,20 @@ const App: React.FC = () => {
     showToastMessage('후기가 거절되었습니다.');
   };
 
+  const handleLogout = () => {
+    // 로컬 스토리지에서 사용자 인증 정보 삭제
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('currentUser');
+
+    // 로그아웃 완료 메시지 표시
+    showToastMessage('성공적으로 로그아웃되었습니다.', 'info');
+
+    // 1초 후 로그인 페이지로 이동 (토스트 메시지를 볼 시간을 줍니다)
+    setTimeout(() => {
+      navigate('/login'); // 로그인 페이지 경로가 다를 경우 수정해주세요.
+    }, 1000);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case '매칭대기':
@@ -424,12 +440,12 @@ const App: React.FC = () => {
                 >
                   설정
                 </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left block px-4 py-2 text-[#364C84] hover:bg-[#E7F1A8]/20"
                 >
                   로그아웃
-                </a>
+                </button>
               </div>
             </div>
           </div>
