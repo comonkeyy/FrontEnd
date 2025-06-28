@@ -7,16 +7,6 @@ import type { VacantHouseData } from '@/types/vacantHouse';
 import { deleteHouse, updateHouse } from '@/api/house';
 import { getMyHouses } from '@/api/house';
 
-interface VacantHouse {
-  id: string;
-  name: string;
-  address: string;
-  status: '매칭대기' | '매칭완료';
-  registeredDate: string;
-  image: string;
-  description: string;
-  size: string;
-}
 const MyPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,58 +31,14 @@ const MyPage: React.FC = () => {
     setActiveTab(tab);
     navigate(tab === 'waiting' ? '/owner/waitinglist' : '/owner/matchedlist');
   };
-  const [houses, setHouses] = useState<VacantHouseData[]>([
-    {
-      id: '1',
-      name: '전통한옥 스타일 주택',
-      address: '경상북도 의성군 의성읍 중앙로 123',
-      detailAddress: '301호',
-      area: '85', // 단위 없음
-      floorCount: '3',
-      region: '의성읍',
-      status: '매칭대기',
-      registeredDate: '2025-06-01',
-      images: [
-        'https://readdy.ai/api/search-image?query=A%20beautiful%20traditional%20Korean%20hanok%20house%20with%20modern%20amenities%2C%20well-maintained%20garden%2C%20and%20clean%20architectural%20lines.%20The%20house%20features%20wooden%20elements%20and%20a%20tiled%20roof%2C%20photographed%20during%20golden%20hour%20with%20soft%20natural%20lighting&width=400&height=300&seq=house1&orientation=landscape',
-      ],
-      description: '전통 한옥 스타일의 아름다운 주택...',
-    },
-    {
-      id: '2',
-      name: '모던 스타일 단독주택',
-      address: '경상북도 의성군 의성읍 후죽리 456',
-      detailAddress: '302호',
-      area: '95',
-      floorCount: '3',
-      region: '의성읍',
-      status: '매칭대기',
-      registeredDate: '2025-05-15',
-      images: [
-        'https://readdy.ai/api/search-image?query=A%20modern%20Korean%20style%20house%20with%20minimalist%20design%2C%20large%20windows%2C%20and%20a%20small%20garden.%20The%20exterior%20combines%20traditional%20and%20contemporary%20elements%2C%20captured%20in%20bright%20daylight%20showing%20its%20clean%20lines%20and%20welcoming%20entrance&width=400&height=300&seq=house2&orientation=landscape',
-      ],
-      description: '2023년 리모델링 완료, 복지사 거주에 최적화된 구조',
-    },
-    {
-      id: '3',
-      name: '전원주택 스타일 빈집',
-      address: '경상북도 의성군 의성읍 업리 789',
-      detailAddress: '201호',
-      area: '120',
-      floorCount: '2',
-      region: '의성읍',
-      status: '매칭완료',
-      registeredDate: '2025-04-20',
-      images: [
-        'https://readdy.ai/api/search-image?query=A%20countryside%20Korean%20house%20with%20a%20spacious%20yard%20and%20mountain%20view.%20The%20house%20combines%20modern%20comfort%20with%20rural%20charm%2C%20featuring%20a%20vegetable%20garden%20and%20outdoor%20seating%20area%2C%20photographed%20in%20warm%20afternoon%20light&width=400&height=300&seq=house3&orientation=landscape',
-      ],
-      description: '자연친화적인 환경, 텃밭 있음',
-    },
-  ]);
+  const [houses, setHouses] = useState<VacantHouseData[]>([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedHouseId, setSelectedHouseId] = useState<string | null>(null);
-  const [editingHouse, setEditingHouse] = useState<VacantHouse | null>(null);
+  const [editingHouse, setEditingHouse] = useState<VacantHouseData | null>(
+    null,
+  );
 
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -203,7 +149,7 @@ const MyPage: React.FC = () => {
                       등록일: {house.registeredDate}
                     </p>
                     <p className="text-sm text-gray-500">
-                      면적: {house.area}㎡
+                      면적: {house.size}㎡
                     </p>
                   </div>
 
@@ -279,6 +225,7 @@ const MyPage: React.FC = () => {
               <button
                 onClick={() => setShowEditModal(false)}
                 className="text-gray-500 hover:text-gray-700"
+                aria-label="Close modal"
               >
                 <i className="fas fa-times text-xl"></i>
               </button>
@@ -286,17 +233,10 @@ const MyPage: React.FC = () => {
 
             <VacantHouseForm
               mode="edit"
-              initialData={{
-                address: editingHouse.address,
-                detailAddress: editingHouse.detailAddress || '',
-                area: editingHouse.area || '', // 여기!
-                floorCount: editingHouse.floorCount || '',
-                region: editingHouse.region || '',
-                description: editingHouse.description,
-                images: editingHouse.images,
-              }}
+              initialData={editingHouse}
               onSubmit={async (data) => {
                 try {
+                  if (!editingHouse?.id) return;
                   await updateHouse(editingHouse.id, data);
                   setHouses((prevHouses) =>
                     prevHouses.map((house) =>

@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react';
 import './MatchRequestPage.css';
 
 type HouseInfo = {
-  area: string;
+  size: string; // area -> size
   roomCount: string;
   yearBuilt: string;
   moveInDate: string;
@@ -12,7 +12,7 @@ type HouseInfo = {
 
 const MatchRequestPage: React.FC = () => {
   const [houseInfo, setHouseInfo] = React.useState<HouseInfo>({
-    area: '',
+    size: '', // area -> size
     roomCount: '',
     yearBuilt: '',
     moveInDate: '',
@@ -44,8 +44,8 @@ const MatchRequestPage: React.FC = () => {
               <span className="info-label">평수</span>
               <input
                 className="info-input"
-                name="area"
-                value={houseInfo.area}
+                name="size" // area -> size
+                value={houseInfo.size} // houseInfo.area -> houseInfo.size
                 onChange={handleChange}
                 placeholder="평수 입력"
               />

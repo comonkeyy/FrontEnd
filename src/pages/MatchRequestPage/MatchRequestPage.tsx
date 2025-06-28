@@ -23,9 +23,9 @@ const REGION_LIST = [
 
 const MatchRequestPage: React.FC = () => {
   const [form, setForm] = useState({
-    minArea: '', // 최소 면적
-    maxArea: '', // 최대 면적
-    floorCount: '', // 층수 (기존대로)
+    minSize: '', // 최소 면적 (minArea -> minSize)
+    maxSize: '', // 최대 면적 (maxArea -> maxSize)
+    floor: '', // 층수 (floorCount -> floor)
     regions: [] as string[], // 지역 (체크박스)
   });
 
@@ -77,7 +77,7 @@ const MatchRequestPage: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <div className="flex-1">
                   <label
-                    htmlFor="minArea"
+                    htmlFor="minSize" // minArea -> minSize
                     className="block text-gray-700 font-medium mb-2"
                   >
                     최소 면적
@@ -85,9 +85,9 @@ const MatchRequestPage: React.FC = () => {
                   <div className="relative">
                     <input
                       type="number"
-                      id="minArea"
-                      name="minArea"
-                      value={form.minArea}
+                      id="minSize" // minArea -> minSize
+                      name="minSize" // minArea -> minSize
+                      value={form.minSize} // form.minArea -> form.minSize
                       onChange={handleChange}
                       min="0"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
@@ -102,7 +102,7 @@ const MatchRequestPage: React.FC = () => {
                 <span className="text-gray-500 text-xl">~</span>
                 <div className="flex-1">
                   <label
-                    htmlFor="maxArea"
+                    htmlFor="maxSize" // maxArea -> maxSize
                     className="block text-gray-700 font-medium mb-2"
                   >
                     최대 면적
@@ -110,9 +110,9 @@ const MatchRequestPage: React.FC = () => {
                   <div className="relative">
                     <input
                       type="number"
-                      id="maxArea"
-                      name="maxArea"
-                      value={form.maxArea}
+                      id="maxSize" // maxArea -> maxSize
+                      name="maxSize" // maxArea -> maxSize
+                      value={form.maxSize} // form.maxArea -> form.maxSize
                       onChange={handleChange}
                       min="0"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
@@ -134,23 +134,17 @@ const MatchRequestPage: React.FC = () => {
                 층수
               </h3>
               <div className="relative">
-                <select
-                  id="floorCount"
-                  name="floorCount"
-                  value={form.floorCount}
+                <input
+                  type="number"
+                  id="floor" // floorCount -> floor
+                  name="floor" // floorCount -> floor
+                  value={form.floor} // form.floorCount -> form.floor
                   onChange={handleChange}
-                  className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] bg-white hover:border-[#95B1EE] transition-colors duration-200"
+                  min="1"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
+                  placeholder="층수"
                   required
-                >
-                  <option value="">층수 선택</option>
-                  <option value="1">1층</option>
-                  <option value="2">2층</option>
-                  <option value="3">3층</option>
-                  <option value="4">4층 이상</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <i className="fas fa-chevron-down"></i>
-                </div>
+                />
               </div>
             </div>
 

@@ -5,7 +5,7 @@ import './MyPageWorker.css';
 type MatchInfo = {
   id: number;
   address: string;
-  area: string;
+  size: string; // area -> size
   roomCount: string;
   yearBuilt: string;
   moveInDate: string;
@@ -19,7 +19,7 @@ const MyPageWorker: React.FC = () => {
     {
       id: 1,
       address: '의성군 의성읍 동문로 123',
-      area: '25평',
+      size: '25평', // area -> size
       roomCount: '3',
       yearBuilt: '2010',
       moveInDate: '2025-08-01',
@@ -29,7 +29,7 @@ const MyPageWorker: React.FC = () => {
     {
       id: 2,
       address: '의성군 단촌면 산성길 45',
-      area: '30평',
+      size: '30평', // area -> size
       roomCount: '2',
       yearBuilt: '2015',
       moveInDate: '2025-07-15',
@@ -66,7 +66,7 @@ const MyPageWorker: React.FC = () => {
               <span className="match-address">{match.address}</span>
             </div>
             <div className="match-info">
-              <span>평수: {match.area}</span>
+              <span>평수: {match.size}</span>
               <span>방 수: {match.roomCount}</span>
               <span>건축 연도: {match.yearBuilt}년</span>
               <span>입주 가능 시기: {match.moveInDate}</span>

@@ -100,8 +100,8 @@ const VacantHouseForm: React.FC<VacantHouseFormProps> = ({
   const [form, setForm] = useState({
     address: initialData?.address || '',
     detailAddress: initialData?.detailAddress || '',
-    area: initialData?.area || '',
-    floorCount: initialData?.floorCount || '',
+    size: initialData?.size || '', // area -> size
+    floor: initialData?.floor || '', // floorCount -> floor
     region: initialData?.region || '',
     description: initialData?.description || '',
   });
@@ -116,8 +116,8 @@ const VacantHouseForm: React.FC<VacantHouseFormProps> = ({
       setForm({
         address: initialData.address || '',
         detailAddress: initialData.detailAddress || '',
-        area: initialData.area || '',
-        floorCount: initialData.floorCount || '',
+        size: initialData.size || '', // area -> size
+        floor: initialData.floor || '', // floorCount -> floor
         region: initialData.region || '',
         description: initialData.description || '',
       });
@@ -237,9 +237,9 @@ const VacantHouseForm: React.FC<VacantHouseFormProps> = ({
         <div className="relative">
           <input
             type="number"
-            id="area"
-            name="area"
-            value={form.area}
+            id="size"
+            name="size" // area -> size
+            value={form.size} // form.area -> form.size
             onChange={handleChange}
             min="0"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] hover:border-[#95B1EE] transition-colors duration-200"
@@ -282,9 +282,9 @@ const VacantHouseForm: React.FC<VacantHouseFormProps> = ({
         </h3>
         <div className="relative">
           <select
-            id="floorCount"
-            name="floorCount"
-            value={form.floorCount}
+            id="floor"
+            name="floor" // floorCount -> floor
+            value={form.floor} // form.floorCount -> form.floor
             onChange={handleChange}
             className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#95B1EE] bg-white hover:border-[#95B1EE] transition-colors duration-200"
             required
